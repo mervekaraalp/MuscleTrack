@@ -52,21 +52,3 @@ from werkzeug.security import generate_password_hash
 # Veritabanı oluşturulmamışsa oluştur
 with app.app_context():
     db.create_all()
-
-    # Yeni kullanıcı ekleme
-    from your_app_file import User  # your_app_file kısmı, app.py'nin dosya adıdır (örneğin app.py ise gerek yok)
-    
-    username = "admin"
-    password = "admin123"
-    email = "admin@example.com"
-
-    hashed_password = generate_password_hash(password, method='sha256')
-    new_user = User(username=username, password=hashed_password, email=email)
-
-    # Eğer kullanıcı daha önce eklenmemişse ekle
-    if not User.query.filter_by(username=username).first():
-        db.session.add(new_user)
-        db.session.commit()
-        print("✅ Kullanıcı başarıyla eklendi!")
-    else:
-        print("ℹ️ Bu kullanıcı zaten var.")
