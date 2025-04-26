@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Kullanıcı verisinin bulunduğu dosya
 USER_DATA_FILE = "users.json"
 
-# Eğer kullanıcı verisi dosyası yoksa, oluştur
+# Eğer kullanıcı veri6si dosyası yoksa, oluştur
 if not os.path.exists(USER_DATA_FILE):
     with open(USER_DATA_FILE, "w") as f:
         json.dump({}, f)
