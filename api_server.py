@@ -55,6 +55,8 @@ def add_sensor_data():
     db.session.commit()
     return jsonify({'message': 'Sensor verisi kaydedildi!'})
 
+# Veritabanı tablolarını oluştur
 with app.app_context():
     db.create_all()
+
 
