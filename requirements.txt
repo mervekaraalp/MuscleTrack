@@ -1,5 +1,7 @@
 streamlit
-pandas
-sqlalchemy
 flask
-gunicorn-23.0.0
+gunicorn
+sqlalchemy
+pandas
+werkzeug
+
