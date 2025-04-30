@@ -1,7 +1,3 @@
-streamlit
-flask
-gunicorn
-sqlalchemy
-pandas
-werkzeug
 
+fastapi
+uvicorn
