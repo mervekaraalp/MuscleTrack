@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from fastapi import FastAPI
+import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -66,4 +67,8 @@ app = FastAPI()
 def read_root():
     return {"message": "Hello World"}
 
+# en alt kısma ekle
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 8000))  # Render PORT ortam değişkeni sağlar
+    app.run(host='0.0.0.0', port=port)
 
