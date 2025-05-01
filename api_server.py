@@ -61,15 +61,13 @@ with app.app_context():
 
 import os
 
-# en alt kısma ekle
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8000))  # Render PORT ortam değişkeni sağlar
-    app.run(host='0.0.0.0', port=port)
-
 app = FastAPI()
 
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
 
-
+ # en alt kısma ekle
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 8000))  # Render PORT ortam değişkeni sağlar
+    app.run(host='0.0.0.0', port=port)
