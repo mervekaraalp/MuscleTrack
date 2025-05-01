@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from fastapi import FastAPI
 import os
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -56,19 +56,16 @@ def add_sensor_data():
     db.session.commit()
     return jsonify({'message': 'Sensor verisi kaydedildi!'})
 
+# Ana sayfa testi
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'message': 'API Çalışıyor!'})
+
 # Veritabanı tablolarını oluştur
 with app.app_context():
     db.create_all()
 
-
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
-
-# en alt kısma ekle
+# Uygulama başlat
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8000))  # Render PORT ortam değişkeni sağlar
+    port = int(os.environ.get("PORT", 8000))  # Render portu otomatik alır
     app.run(host='0.0.0.0', port=port)
-
