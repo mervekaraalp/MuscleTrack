@@ -1,4 +1,3 @@
-# api.py
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,6 +17,7 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
 
+# Token kontrolü için dekoratör
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -32,18 +32,47 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
+# Kullanıcı kaydı
+@app.route('/register_api', methods=['POST'])
+def register_api():
+    data = request.get_json()
+    if not all(k in data for k in ('username', 'password', 'email')):
+        return jsonify({'message': 'Eksik bilgi gönderildi!'}), 400
+
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({'message': 'Kullanıcı adı zaten alınmış!'}), 400
+
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({'message': 'Bu e-posta zaten kayıtlı!'}), 400
+
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = User(username=data['username'], email=data['email'], password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'User created successfully'}), 201
+
+# Kullanıcı girişi
 @app.route('/login_api', methods=['POST'])
 def login_api():
     data = request.get_json()
     user = User.query.filter_by(username=data['username']).first()
     if not user or not check_password_hash(user.password, data['password']):
         return jsonify({'message': 'Invalid credentials!'}), 401
+
     token = jwt.encode({
         'id': user.id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
     }, app.config['SECRET_KEY'], algorithm='HS256')
+
     return jsonify({'token': token})
 
+# Kullanıcı listesini getir
+@app.route('/users', methods=['GET'])
+def list_users():
+    users = User.query.all()
+    return jsonify([{"username": u.username, "email": u.email} for u in users])
+
+# Sensör verisi (korumalı endpoint)
 @app.route('/sensor_data', methods=['GET'])
 @token_required
 def sensor_data(current_user):
@@ -51,17 +80,8 @@ def sensor_data(current_user):
     flex_value = 1  # Dummy data
     return jsonify({'emg': emg_value, 'flex': flex_value})
 
+# Sunucu başlat
 if __name__ == '__main__':
+    db.create_all()  # Veritabanı yoksa oluştur
     app.run(port=5000)
-@app.route('/users', methods=['GET'])
-def list_users():
-    users = User.query.all()
-    return jsonify([{"username": u.username, "email": u.email} for u in users])
-@app.route('/register_api', methods=['POST'])
-def register_api():
-    data = request.get_json()
-    hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(username=data['username'], email=data['email'], password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User created successfully'})
+

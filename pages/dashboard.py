@@ -58,3 +58,16 @@ elif choice == "Giriş Yap":
                 st.error("Giriş başarısız: " + login_response.json().get("message", "Hata oluştu."))
         except requests.exceptions.ConnectionError:
             st.error("Sunucuya bağlanılamadı. Flask sunucusunun çalıştığından emin olun.")
+
+st.session_state.token = token
+st.session_state.logged_in = True
+
+if st.session_state.get("logged_in"):
+    st.subheader("Sensör Verileri")
+    headers = {"x-access-token": st.session_state.token}
+    data_response = requests.get(f"{BASE_URL}/sensor_data", headers=headers)
+    if data_response.status_code == 200:
+        sensor_data = data_response.json().get("sensor_data", [])
+        st.dataframe(sensor_data)
+    else:
+        st.warning("Sensör verileri alınamadı.")
