@@ -19,7 +19,8 @@ def register_user(username, password):
 # api_client.py
 import requests
 
-API_URL = "https://muscletrack.onrender.com"  # Render'daki canlı API adresin
+API_URL ="https://muscletrack.onrender.com/login_api"
+
 
 def register_user(username, password):
     try:

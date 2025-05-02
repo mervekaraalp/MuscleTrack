@@ -3,7 +3,8 @@ import requests
 
 st.title("MuscleTrack Kullanıcı Paneli")
 
-BASE_URL = "http://127.0.0.1:5000"
+BASE_URL = "https://muscletrack.onrender.com"
+
 
 menu = ["Kayıt Ol", "Giriş Yap"]
 choice = st.sidebar.selectbox("Menü", menu)

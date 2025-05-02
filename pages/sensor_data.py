@@ -6,7 +6,7 @@ import altair as alt
 st.set_page_config(page_title="Sensör Verileri", page_icon="📊")
 
 # Giriş kontrolü
-if "giris_yapildi" not in st.session_state or not st.session_state["giris_yapildi"]:
+if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Lütfen önce giriş yapın.")
     st.stop()
 
