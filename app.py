@@ -12,6 +12,6 @@ st.markdown(
     """
 )
 
-st.image("https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif", caption="Haydi Başlayalım!", use_container_width=True)
+st.image( caption="Haydi Başlayalım!", use_container_width=True)
 
 

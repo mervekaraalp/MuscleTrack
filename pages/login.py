@@ -11,7 +11,8 @@ password = st.text_input("Şifre", type="password")
 
 if st.button("Giriş"):
     # Backend'e (API'ye) post isteği gönderiyoruz
-    response = requests.post("http://127.0.0.1:5000/login_api", json={
+    response = requests.post("https://muscletrack.onrender.com/login_api", json={
+
         "username": username,
         "password": password
     })
