@@ -5,4 +5,5 @@ pandas
 flask_sqlalchemy
 flask_cors
 gunicorn
-
+PyJWT
+pymongo
