@@ -3,7 +3,6 @@ import requests
 
 API_URL = 'http://127.0.0.1:5000'  # Flask API adresi
 
-# Kullanıcı kaydı
 def register_user():
     st.title("Kayıt Ol")
 
@@ -19,10 +18,21 @@ def register_user():
                 'password': password
             })
 
+            # Yanıtı yazdırarak kontrol et
+            print(response.text)  # Bu satırı ekledim
+
             if response.status_code == 201:
                 st.success("Kayıt başarılı!")
             else:
-                st.error(response.json().get("message", "Kayıt başarısız."))
+                try:
+                    # JSON formatında bir yanıt alınamadığında hata verir
+                    data = response.json()
+                    st.error(data.get("message", "Kayıt başarısız."))
+                except ValueError:
+                    # JSON hatası durumunda hata mesajı göster
+                    st.error("API'den geçerli bir yanıt alınamadı.")
+                    print(response.text)  # Detaylı hata mesajı için yanıtı yazdırın
+
 
 # Kullanıcı giriş
 def login_user():
