@@ -18,7 +18,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
 
 class SensorData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,15 +46,13 @@ def token_required(f):
 @app.route('/register_api', methods=['POST'])
 def register_api():
     data = request.get_json()
-    if not all(k in data for k in ('username', 'password', 'email')):
+    if not all(k in data for k in ('username', 'password')):
         return jsonify({'message': 'Eksik bilgi gönderildi!'}), 400
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'message': 'Kullanıcı adı zaten alınmış!'}), 400
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({'message': 'Bu e-posta zaten kayıtlı!'}), 400
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(username=data['username'], email=data['email'], password=hashed_password)
+    new_user = User(username=data['username'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'Kullanıcı başarıyla oluşturuldu!'}), 201
@@ -104,14 +101,14 @@ def get_sensor_data(current_user):
 @app.route('/users', methods=['GET'])
 def list_users():
     users = User.query.all()
-    return jsonify([{"username": u.username, "email": u.email} for u in users])
+    return jsonify([{"username": u.username} for u in users])
 
 ### SAĞLIK KONTROLÜ
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({'message': 'API çalışıyor!'})
 
-### SUNUCUYU BAŞLAT
+### VERİTABANINI OLUŞTUR
 with app.app_context():
     db.create_all()
 
