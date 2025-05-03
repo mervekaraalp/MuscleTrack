@@ -1,31 +1,45 @@
 import streamlit as st
 import requests
 
-# Sayfa başlığı
-st.set_page_config(page_title="MuscleTrack Login", page_icon="💪")
+st.title("MuscleTrack Giriş & Kayıt")
 
-# Kullanıcı adı ve şifre girişi
-st.title("🔐 Giriş Yap")
+# Giriş Formu
+st.subheader("Giriş Yap")
 username = st.text_input("Kullanıcı Adı")
 password = st.text_input("Şifre", type="password")
+
 if st.button("Giriş"):
-    try:
-        response = requests.post("https://muscletrack.onrender.com/login_api", json={
-            "username": username,
-            "password": password
+    response = requests.post("http://localhost:5000/login_api", json={
+        "username": username,
+        "password": password
+    })
+    if response.status_code == 200:
+        token = response.json().get("token")
+        st.success("Giriş başarılı!")
+        st.session_state["token"] = token
+        st.session_state["username"] = username
+        st.switch_page("dashboard.py")
+    else:
+        st.error(response.json().get("message", "Giriş başarısız."))
+
+# Ayırıcı
+st.markdown("---")
+
+# Kayıt Formu
+st.subheader("Kayıt Ol")
+new_username = st.text_input("Yeni Kullanıcı Adı")
+new_password = st.text_input("Yeni Şifre", type="password")
+
+if st.button("Kayıt Ol"):
+    if not new_username or not new_password:
+        st.error("Tüm alanları doldurmalısınız!")
+    else:
+        response = requests.post("http://localhost:5000/register_api", json={
+            "username": new_username,
+            "password": new_password
         })
-        if response.status_code == 200:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.success("Giriş başarılı! 🎉")
-            st.experimental_set_query_params(page="dashboard")
+        if response.status_code == 201:
+            st.success("Kayıt başarılı! Giriş yapabilirsiniz.")
         else:
-            st.error("Kullanıcı adı veya şifre hatalı.")
-    except requests.exceptions.RequestException as e:
-        st.error("Sunucuya ulaşılamıyor. Lütfen daha sonra tekrar deneyin.")
-        st.exception(e)
+            st.error(response.json().get("message", "Kayıt başarısız."))
 
-
-if st.session_state.get("logged_in"):
-    st.success("Zaten giriş yaptınız.")
-    st.experimental_set_query_params(page="dashboard")
