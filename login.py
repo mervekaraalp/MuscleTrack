@@ -1,45 +1,65 @@
 import streamlit as st
 import requests
 
-st.title("MuscleTrack Giriş & Kayıt")
+API_URL = 'http://127.0.0.1:5000'  # Flask API adresi
 
-# Giriş Formu
-st.subheader("Giriş Yap")
-username = st.text_input("Kullanıcı Adı")
-password = st.text_input("Şifre", type="password")
+# Kullanıcı kaydı
+def register_user():
+    st.title("Kayıt Ol")
 
-if st.button("Giriş"):
-    response = requests.post("http://localhost:5000/login_api", json={
-        "username": username,
-        "password": password
-    })
-    if response.status_code == 200:
-        token = response.json().get("token")
-        st.success("Giriş başarılı!")
-        st.session_state["token"] = token
-        st.session_state["username"] = username
-        st.switch_page("dashboard.py")
-    else:
-        st.error(response.json().get("message", "Giriş başarısız."))
+    username = st.text_input("Yeni Kullanıcı Adı")
+    password = st.text_input("Yeni Şifre", type="password")
 
-# Ayırıcı
-st.markdown("---")
-
-# Kayıt Formu
-st.subheader("Kayıt Ol")
-new_username = st.text_input("Yeni Kullanıcı Adı")
-new_password = st.text_input("Yeni Şifre", type="password")
-
-if st.button("Kayıt Ol"):
-    if not new_username or not new_password:
-        st.error("Tüm alanları doldurmalısınız!")
-    else:
-        response = requests.post("http://localhost:5000/register_api", json={
-            "username": new_username,
-            "password": new_password
-        })
-        if response.status_code == 201:
-            st.success("Kayıt başarılı! Giriş yapabilirsiniz.")
+    if st.button("Kayıt Ol"):
+        if not username or not password:
+            st.error("Lütfen kullanıcı adı ve şifre girin.")
         else:
-            st.error(response.json().get("message", "Kayıt başarısız."))
+            response = requests.post(f"{API_URL}/register_api", json={
+                'username': username,
+                'password': password
+            })
+
+            if response.status_code == 201:
+                st.success("Kayıt başarılı!")
+            else:
+                st.error(response.json().get("message", "Kayıt başarısız."))
+
+# Kullanıcı giriş
+def login_user():
+    st.title("Giriş Yap")
+
+    username = st.text_input("Kullanıcı Adı")
+    password = st.text_input("Şifre", type="password")
+
+    if st.button("Giriş Yap"):
+        if not username or not password:
+            st.error("Lütfen kullanıcı adı ve şifre girin.")
+        else:
+            response = requests.post(f"{API_URL}/login_api", json={
+                'username': username,
+                'password': password
+            })
+
+            if response.status_code == 200:
+                token = response.json()['token']
+                st.session_state['token'] = token  # Token'ı session'a kaydediyoruz
+                st.success("Giriş başarılı!")
+                st.session_state.logged_in = True
+                st.experimental_rerun()  # Sayfayı yenileyerek dashboard'a yönlendirebiliriz
+            else:
+                st.error(response.json().get("message", "Giriş başarısız."))
+
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if st.session_state.logged_in:
+    st.write("Hoş geldiniz!")
+    st.write("Ana sayfaya yönlendiriliyorsunuz...")
+else:
+    page = st.selectbox("Sayfa Seç", ["Giriş Yap", "Kayıt Ol"])
+    if page == "Giriş Yap":
+        login_user()
+    elif page == "Kayıt Ol":
+        register_user()
+
 
