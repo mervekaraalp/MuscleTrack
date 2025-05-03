@@ -1,8 +1,10 @@
+
 import streamlit as st
 import requests
 
-API_URL = 'http://127.0.0.1:5000'  # Flask API adresi
+API_URL = 'https://muscletrack.onrender.com'  # Render API URL'si
 
+# Kullanıcı kaydı
 def register_user():
     st.title("Kayıt Ol")
 
@@ -32,7 +34,6 @@ def register_user():
                     # JSON hatası durumunda hata mesajı göster
                     st.error("API'den geçerli bir yanıt alınamadı.")
                     print(response.text)  # Detaylı hata mesajı için yanıtı yazdırın
-
 
 # Kullanıcı giriş
 def login_user():
@@ -71,5 +72,6 @@ else:
         login_user()
     elif page == "Kayıt Ol":
         register_user()
+
 
 
