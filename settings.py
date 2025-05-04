@@ -11,7 +11,7 @@ def giris_formu():
 
         if giris_button:
             if kullanici_adi == "admin" and sifre == "1234":
-                st.session_state["giris_yapildi"] = True
+                st.session_state["logged_in"] = True  # <-- TUTARLILIK
                 st.session_state["username"] = kullanici_adi
                 st.success("Giriş başarılı!")
             else:
@@ -57,7 +57,7 @@ def ayarlar_sayfasi():
         st.success("Ayarlar başarıyla kaydedildi!")
 
 # Ana yönlendirme
-if "giris_yapildi" not in st.session_state or not st.session_state["giris_yapildi"]:
+if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     if secim != "Home":
         st.warning("Lütfen önce giriş yapın.")
     giris_formu()
@@ -70,4 +70,5 @@ else:
         sensor_data_sayfasi()
     elif secim == "Ayarlar":
         ayarlar_sayfasi()
+
 
