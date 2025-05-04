@@ -5,12 +5,16 @@ import jwt
 import datetime
 from functools import wraps
 import os
+from flask_cors import CORS  # CORS import
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'supersecretkey'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'defaultsecretkey')  # Secret key'i güvenli bir şekilde almak
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+# CORS izinlerini tüm uygulama için aç
+CORS(app)
 
 ### MODELLER
 
@@ -18,7 +22,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
 
 class SensorData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,15 +50,13 @@ def token_required(f):
 @app.route('/register_api', methods=['POST'])
 def register_api():
     data = request.get_json()
-    if not all(k in data for k in ('username', 'password', 'email')):
+    if not all(k in data for k in ('username', 'password')):
         return jsonify({'message': 'Eksik bilgi gönderildi!'}), 400
     if User.query.filter_by(username=data['username']).first():
-        return jsonify({'message': 'Kullanıcı adı zaten alınmış!'}), 400
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({'message': 'Bu e-posta zaten kayıtlı!'}), 400
+        return jsonify({'message': f"Kullanıcı adı '{data['username']}' zaten alınmış!"}), 400  # Kullanıcı adı belirtildi
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(username=data['username'], email=data['email'], password=hashed_password)
+    new_user = User(username=data['username'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'Kullanıcı başarıyla oluşturuldu!'}), 201
@@ -95,16 +96,9 @@ def add_sensor_data(current_user):
 @token_required
 def get_sensor_data(current_user):
     datas = SensorData.query.filter_by(user_id=current_user.id).all()
-    return jsonify([
-        {'emg': d.emg, 'flex': d.flex, 'value': d.value, 'timestamp': d.timestamp.isoformat()}
-        for d in datas
-    ])
-
-### TÜM KULLANICILARI LİSTELE
-@app.route('/users', methods=['GET'])
-def list_users():
-    users = User.query.all()
-    return jsonify([{"username": u.username, "email": u.email} for u in users])
+    return jsonify([{
+        'emg': d.emg, 'flex': d.flex, 'value': d.value, 'timestamp': d.timestamp.isoformat()
+    } for d in datas])
 
 ### SAĞLIK KONTROLÜ
 @app.route('/', methods=['GET'])
@@ -118,5 +112,4 @@ with app.app_context():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Render için PORT env değişkeni
     app.run(host='0.0.0.0', port=port)
-
 
