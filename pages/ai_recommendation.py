@@ -12,6 +12,9 @@ if 'giris_yapildi' not in st.session_state or not st.session_state['giris_yapild
     st.warning("Lütfen önce giriş yapınız.")
     st.stop()
 
+# Kullanıcı adı kontrolü
+kullanici_adi = st.session_state.get("username", "Bilinmiyor")
+
 # Vücut bölgesi seçimi
 bolge = st.selectbox("Lütfen bir vücut bölgesi seçin:", ["Ayak", "El"])
 
@@ -51,13 +54,13 @@ for ad, aciklama in onerilen:
 # Egzersizleri kaydet
 if st.button("📥 Egzersizleri Günlük Kaydet"):
     egzersiz_kaydet(
-        kullanici_adi=st.session_state["kullanici_adi"],
+        kullanici_adi=kullanici_adi,
         bolge=bolge,
         egzersizler=[ad for ad, _ in onerilen]
     )
     st.success("Egzersiz önerileri başarıyla günlük geçmişinize kaydedildi.")
 
-
 # Alt bilgi
 st.caption("MuscleTrack AI – Sensör destekli akıllı egzersiz rehberi 💪")
+
 
