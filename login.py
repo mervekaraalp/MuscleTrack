@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
+from streamlit_extras.switch_page_button import switch_page
 
-API_URL = 'https://muscletrack.onrender.com'  # Render API URL'si
+API_URL = 'https://muscletrack.onrender.com'  # Render API URL
 
 # Kullanıcı kaydı
 def register_user():
@@ -20,7 +21,8 @@ def register_user():
             })
 
             if response.status_code == 201:
-                st.success("Kayıt başarılı!")
+                st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz.")
+                st.experimental_rerun()
             else:
                 try:
                     data = response.json()
@@ -46,29 +48,31 @@ def login_user():
 
             if response.status_code == 200:
                 token = response.json()['token']
-                st.session_state['token'] = token  # Token'ı session'a kaydediyoruz
+                st.session_state['token'] = token
+                st.session_state['username'] = username
+                st.session_state['logged_in'] = True
                 st.success("Giriş başarılı!")
-                st.session_state.logged_in = True
-                st.experimental_rerun()  # Sayfayı yenileyerek dashboard'a yönlendirilebiliriz
+                switch_page("dashboard")  # Dashboard sayfasına yönlendirme
             else:
                 st.error(response.json().get("message", "Giriş başarısız."))
 
-# Çıkış yap (logout) fonksiyonu
+# Çıkış yap fonksiyonu
 def logout_user():
     st.session_state.logged_in = False
-    st.session_state.pop("token", None)  # Token'ı session'dan kaldırıyoruz
-    st.success("Çıkış yapıldı. Giriş yapmanız gerekiyor.")
-    st.experimental_rerun()  # Sayfayı yenileyerek giriş ekranına yönlendiriyoruz
+    st.session_state.pop("token", None)
+    st.session_state.pop("username", None)
+    st.success("Çıkış yapıldı.")
+    st.experimental_rerun()
 
 # Oturum kontrolü
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
-# Kullanıcı girişi yapılmışsa gösterilecek içerik
+# Giriş yapılmışsa karşılama ve çıkış seçeneği
 if st.session_state.logged_in:
-    st.write("Hoş geldiniz!")
+    st.write(f"Hoş geldin, {st.session_state.get('username', '')}!")
     if st.button("Çıkış Yap"):
-        logout_user()  # Çıkış yap butonuna tıklanırsa logout_user fonksiyonu çalışacak
+        logout_user()
 else:
     page = st.selectbox("Sayfa Seç", ["Giriş Yap", "Kayıt Ol"])
     if page == "Giriş Yap":
