@@ -5,7 +5,7 @@ import jwt
 import datetime
 from functools import wraps
 import os
-from flask_cors import CORS  # CORS import
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'defaultsecretkey')  # Secret key'i güvenli bir şekilde almak
@@ -113,5 +113,6 @@ with app.app_context():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Render için PORT env değişkeni
     app.run(host='0.0.0.0', port=port)
+
 
 
