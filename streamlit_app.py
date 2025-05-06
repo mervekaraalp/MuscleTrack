@@ -10,7 +10,7 @@ st.set_page_config(page_title="MuscleTrack", page_icon="💪", layout="centered"
 # Başlık
 st.title("💪 MuscleTrack Paneli")
 st.markdown("""
-Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.  
+**Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.**  
 Devam edebilmek için giriş yapın veya kayıt olun! 👇
 """)
 
@@ -40,8 +40,7 @@ if "token" not in st.session_state:
 
     # Kayıt ol butonu
     if st.button("Kayıt Ol"):
-        st.session_state.page = "register"
-        st.experimental_rerun()
+        st.query_params.page = "register"  # sayfayı register.py'ye yönlendirir
 
 # Giriş yaptıktan sonra gösterilecek veriler
 else:
@@ -67,6 +66,7 @@ else:
     if st.button("Çıkış Yap"):
         del st.session_state.token
         st.experimental_rerun()
+
 
 
 
