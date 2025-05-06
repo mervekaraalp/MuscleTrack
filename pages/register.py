@@ -17,4 +17,4 @@ if st.button("Kayıt Ol"):
     except Exception as e:
         st.error(f"Kayıt sırasında bir hata oluştu: {str(e)}")
 
-
+st.write(result)  # geçici olarak ekle, gelen veriyi gösterir
