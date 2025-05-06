@@ -35,9 +35,9 @@ if "token" not in st.session_state:
         except requests.exceptions.RequestException:
             st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
 
-    # Kayıt olma sayfasına yönlendirme butonu
+    # Kayıt olma sayfasına yönlendirme
     if st.button("Kayıt Ol"):
-        st.write("[Kayıt Ol](./register)")  # Burada register sayfasına yönlendirme sağlanıyor
+        st.experimental_set_query_params(page="register")  # Yönlendirme yapılır
 
 # Giriş yaptıktan sonra gösterilecek veriler
 else:
@@ -63,6 +63,7 @@ else:
     if st.button("Çıkış Yap"):
         del st.session_state.token
         st.experimental_rerun()
+
 
 
 
