@@ -9,7 +9,10 @@ st.set_page_config(page_title="MuscleTrack", page_icon="💪", layout="centered"
 
 # Başlık
 st.title("💪 MuscleTrack Paneli")
-st.write("Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip et!")
+st.markdown("""
+Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.  
+Devam edebilmek için giriş yapın veya kayıt olun! 👇
+""")
 
 # Giriş ekranı
 if "token" not in st.session_state:
@@ -35,9 +38,10 @@ if "token" not in st.session_state:
         except requests.exceptions.RequestException:
             st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
 
-    # Kayıt olma sayfasına yönlendirme
+    # Kayıt ol butonu
     if st.button("Kayıt Ol"):
-        st.experimental_set_query_params(page="register")  # Yönlendirme yapılır
+        st.session_state.page = "register"
+        st.experimental_rerun()
 
 # Giriş yaptıktan sonra gösterilecek veriler
 else:
