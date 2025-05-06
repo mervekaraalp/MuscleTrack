@@ -10,15 +10,15 @@ st.set_page_config(page_title="MuscleTrack", page_icon="💪", layout="centered"
 # Başlık
 st.title("💪 MuscleTrack Paneli")
 st.markdown("""
-**Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.**  
+Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.  
 Devam edebilmek için giriş yapın veya kayıt olun! 👇
 """)
 
 # Giriş ekranı
 if "token" not in st.session_state:
     st.subheader("Giriş Yap")
-    username = st.text_input("Kullanıcı Adı")
-    password = st.text_input("Şifre", type="password")
+    username = st.text_input("👤 Kullanıcı Adı")
+    password = st.text_input("🔒 Şifre", type="password")
 
     if st.button("Giriş Yap"):
         try:
@@ -30,17 +30,17 @@ if "token" not in st.session_state:
             if response.status_code == 200:
                 token = response.json()["token"]
                 st.session_state.token = token
-                st.success("Giriş başarılı!")
+                st.success("✅ Giriş başarılı!")
                 st.experimental_rerun()
             else:
-                st.error("Kullanıcı adı veya şifre hatalı.")
+                st.error("❌ Kullanıcı adı veya şifre hatalı.")
 
         except requests.exceptions.RequestException:
-            st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
+            st.error("🚨 API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
 
     # Kayıt ol butonu
     if st.button("Kayıt Ol"):
-        st.query_params.page = "register"  # sayfayı register.py'ye yönlendirir
+        st.switch_page("pages/register.py")
 
 # Giriş yaptıktan sonra gösterilecek veriler
 else:
@@ -58,14 +58,15 @@ else:
             st.metric(label="EMG Değeri", value=emg)
             st.metric(label="Flex Değeri", value=flex)
         else:
-            st.error("Sensör verileri alınamadı. API anahtarını veya sunucuyu kontrol edin.")
+            st.error("❌ Sensör verileri alınamadı.")
 
     except requests.exceptions.RequestException:
-        st.error("API'ye bağlanılamadı. Lütfen internet bağlantınızı veya sunucuyu kontrol edin.")
+        st.error("🚨 API'ye bağlanılamadı.")
 
     if st.button("Çıkış Yap"):
         del st.session_state.token
         st.experimental_rerun()
+
 
 
 
