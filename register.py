@@ -17,4 +17,5 @@ if st.button("Kayıt Ol"):
     except Exception as e:
         st.error(f"Kayıt sırasında bir hata oluştu: {str(e)}")
 
-
+if 'result' in locals():
+    st.write(result)
