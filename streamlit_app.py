@@ -49,6 +49,4 @@ else:
 
 from werkzeug.security import generate_password_hash
 
-# Veritabanı oluşturulmamışsa oluştur
-with app.app_context():
-    db.create_all()
+
