@@ -1,5 +1,6 @@
 import streamlit as st
 from api_client import register_user
+st.set_page_config(page_title="Kayıt Ol", page_icon="📝")
 
 st.title("Kayıt Ol")
 
