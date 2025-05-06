@@ -7,3 +7,7 @@ flask_cors
 gunicorn
 PyJWT
 pymongo
+streamlit
+requests
+Werkzeug
+python-dotenv
