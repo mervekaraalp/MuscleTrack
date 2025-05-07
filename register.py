@@ -1,25 +1,34 @@
 import streamlit as st
-from api_client import register_user
+import requests
 
-st.title("📝 Kayıt Ol")
-st.markdown("Yeni bir hesap oluşturmak için aşağıdaki bilgileri doldurun.")
+API_URL = "https://muscletrack.onrender.com"
 
-# Giriş alanları
-username = st.text_input("👤 Kullanıcı Adı")
-password = st.text_input("🔒 Şifre", type="password")
+st.set_page_config(page_title="Kayıt Ol", page_icon="📝", layout="centered")
+st.title("📝 Yeni Hesap Oluştur")
 
-# Kayıt butonu
-if st.button("Kayıt Ol"):
-    if username and password:
-        try:
-            result = register_user(username, password)
-            message = result.get("message", "")
-            if "başarılı" in message.lower():
-                st.success("✅ Kayıt başarılı! Artık giriş yapabilirsiniz.")
-            else:
-                st.error(message or "❌ Kayıt başarısız.")
-        except Exception as e:
-            st.error(f"🚨 Kayıt sırasında bir hata oluştu: {str(e)}")
+username = st.text_input("Kullanıcı Adı")
+password = st.text_input("Şifre", type="password")
+
+if st.button("Kaydol"):
+    if not username or not password:
+        st.warning("Lütfen kullanıcı adı ve şifre girin.")
     else:
-        st.warning("Lütfen tüm alanları doldurun.")
+        try:
+            response = requests.post(f"{API_URL}/register_api", json={
+                "username": username,
+                "password": password
+            })
+
+            if response.status_code == 201:
+                st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
+                st.toast("Giriş sayfasına yönlendiriliyorsunuz...")
+                st.session_state.page = "login"
+                st.rerun()
+            elif response.status_code == 400:
+                st.error(response.json().get("message", "Geçersiz kayıt verisi."))
+            else:
+                st.error("Bilinmeyen bir hata oluştu.")
+        except requests.exceptions.RequestException:
+            st.error("API'ye bağlanılamadı. Lütfen bağlantınızı kontrol edin.")
+
 
