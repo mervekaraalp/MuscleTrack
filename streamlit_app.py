@@ -31,20 +31,17 @@ if "token" not in st.session_state:
                 token = response.json()["token"]
                 st.session_state.token = token
                 st.success("Giriş başarılı!")
-                # Başarılı giriş sonrası sayfa yenilenir
-                st.experimental_rerun()
+                st.rerun()  # Sayfayı yenile
             else:
                 st.error("Kullanıcı adı veya şifre hatalı.")
-
         except requests.exceptions.RequestException:
             st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
 
     # Kayıt ol butonu
     if st.button("Kayıt Ol"):
         st.session_state.page = "register"
-        # Sayfa yönlendirme yapılır
-        st.experimental_set_query_params(page="register")
-        st.experimental_rerun()  # Yönlendirme sonrası sayfa yenilenir
+        st.query_params.update({"page": "register"})  # URL'yi güncelle
+        st.rerun()  # Sayfayı yönlendir
 
 # Giriş yaptıktan sonra gösterilecek veriler
 else:
@@ -63,13 +60,13 @@ else:
             st.metric(label="Flex Değeri", value=flex)
         else:
             st.error("Sensör verileri alınamadı. API anahtarını veya sunucuyu kontrol edin.")
-
     except requests.exceptions.RequestException:
         st.error("API'ye bağlanılamadı. Lütfen internet bağlantınızı veya sunucuyu kontrol edin.")
 
     if st.button("Çıkış Yap"):
         del st.session_state.token
-        st.experimental_rerun()
+        st.rerun()
+s
 
 
 
