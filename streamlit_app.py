@@ -14,69 +14,63 @@ Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.
 Devam edebilmek için giriş yapın veya kayıt olun! 👇
 """)
 
-# Kayıt sayfasına yönlendirme
-if "page" in st.session_state and st.session_state.page == "register":
-    st.query_params(page="register")
-    st.write("Yönlendiriliyorsunuz... Lütfen bekleyin.")
-    st.stop()
+# Giriş ekranı
+if "token" not in st.session_state:
+    st.subheader("Giriş Yap")
+    username = st.text_input("Kullanıcı Adı")
+    password = st.text_input("Şifre", type="password")
 
-else:
-    # Giriş ekranı
-    if "token" not in st.session_state:
-        st.subheader("Giriş Yap")
-        username = st.text_input("Kullanıcı Adı")
-        password = st.text_input("Şifre", type="password")
-
-        if st.button("Giriş Yap"):
-            try:
-                response = requests.post(f"{API_URL}/login_api", json={
-                    "username": username,
-                    "password": password
-                })
-
-                if response.status_code == 200:
-                    token = response.json()["token"]
-                    st.session_state.token = token
-                    st.success("Giriş başarılı!")
-                    st.query_params(page="home")  # Burada yönlendirme yapılacak
-                    st.stop()
-                else:
-                    st.error("Kullanıcı adı veya şifre hatalı.")
-
-            except requests.exceptions.RequestException:
-                st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
-
-        # Kayıt ol butonu
-        if st.button("Kayıt Ol"):
-            st.session_state.page = "register"
-            st.query_params(page="register")
-            st.stop()
-
-    # Giriş yaptıktan sonra gösterilecek veriler
-    else:
-        st.subheader("Sensör Verileri")
-
-        headers = {"x-access-token": st.session_state.token}
+    if st.button("Giriş Yap"):
         try:
-            data_response = requests.get(f"{API_URL}/sensor_data", headers=headers)
+            response = requests.post(f"{API_URL}/login_api", json={
+                "username": username,
+                "password": password
+            })
 
-            if data_response.status_code == 200:
-                sensor_data = data_response.json()
-                emg = sensor_data.get('emg', "Yok")
-                flex = sensor_data.get('flex', "Yok")
-
-                st.metric(label="EMG Değeri", value=emg)
-                st.metric(label="Flex Değeri", value=flex)
+            if response.status_code == 200:
+                token = response.json()["token"]
+                st.session_state.token = token
+                st.success("Giriş başarılı!")
+                # Başarılı giriş sonrası sayfa yenilenir
+                st.experimental_rerun()
             else:
-                st.error("Sensör verileri alınamadı. API anahtarını veya sunucuyu kontrol edin.")
+                st.error("Kullanıcı adı veya şifre hatalı.")
 
         except requests.exceptions.RequestException:
-            st.error("API'ye bağlanılamadı. Lütfen internet bağlantınızı veya sunucuyu kontrol edin.")
+            st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
 
-        if st.button("Çıkış Yap"):
-            del st.session_state.token
-            st.query_params(page="home")  # Sayfa yönlendirmesi yapılacak
-            st.stop()
+    # Kayıt ol butonu
+    if st.button("Kayıt Ol"):
+        st.session_state.page = "register"
+        # Sayfa yönlendirme yapılır
+        st.experimental_set_query_params(page="register")
+        st.experimental_rerun()  # Yönlendirme sonrası sayfa yenilenir
+
+# Giriş yaptıktan sonra gösterilecek veriler
+else:
+    st.subheader("Sensör Verileri")
+
+    headers = {"x-access-token": st.session_state.token}
+    try:
+        data_response = requests.get(f"{API_URL}/sensor_data", headers=headers)
+
+        if data_response.status_code == 200:
+            sensor_data = data_response.json()
+            emg = sensor_data.get('emg', "Yok")
+            flex = sensor_data.get('flex', "Yok")
+
+            st.metric(label="EMG Değeri", value=emg)
+            st.metric(label="Flex Değeri", value=flex)
+        else:
+            st.error("Sensör verileri alınamadı. API anahtarını veya sunucuyu kontrol edin.")
+
+    except requests.exceptions.RequestException:
+        st.error("API'ye bağlanılamadı. Lütfen internet bağlantınızı veya sunucuyu kontrol edin.")
+
+    if st.button("Çıkış Yap"):
+        del st.session_state.token
+        st.experimental_rerun()
+
 
 
 
