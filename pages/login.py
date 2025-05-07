@@ -1,79 +1,52 @@
 import streamlit as st
 import requests
 
-API_URL = 'https://muscletrack.onrender.com'  # API adresin
+# API URL (Render'daki Flask sunucun)
+API_URL = "https://muscletrack.onrender.com"
 
-def register_user():
-    st.subheader("Kayıt Ol")
+# Başlık
+st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
+st.title("💪 MuscleTrack Giriş Paneli")
 
-    username = st.text_input("Yeni Kullanıcı Adı", key="register_username")
-    password = st.text_input("Yeni Şifre", type="password", key="register_password")
+# Giriş yapıldıysa doğrudan yönlendir
+if st.session_state.get("logged_in"):
+    st.experimental_set_query_params(page="sensor_data")  # URL parametreleri ile yönlendirme
+    st.stop()
 
-    if st.button("Kayıt Ol"):
-        if not username or not password:
-            st.error("Lütfen kullanıcı adı ve şifre girin.")
-        else:
-            response = requests.post(f"{API_URL}/register_api", json={
-                'username': username,
-                'password': password
-            })
+# Giriş Formu
+username = st.text_input("Kullanıcı Adı")
+password = st.text_input("Şifre", type="password")
 
-            if response.status_code == 201:
-                st.success("Kayıt başarılı! Lütfen giriş yapın.")
-                st.session_state["page"] = "login"  # Giriş sekmesine döndür
-                st.rerun()
-            else:
-                try:
-                    data = response.json()
-                    st.error(data.get("message", "Kayıt başarısız."))
-                except ValueError:
-                    st.error("Sunucudan geçerli yanıt alınamadı.")
-
-def login_user():
-    st.subheader("Giriş Yap")
-
-    username = st.text_input("Kullanıcı Adı", key="login_username")
-    password = st.text_input("Şifre", type="password", key="login_password")
-
-    if st.button("Giriş Yap"):
-        if not username or not password:
-            st.error("Lütfen kullanıcı adı ve şifre girin.")
-        else:
-            response = requests.post(f"{API_URL}/login_api", json={
-                'username': username,
-                'password': password
+if st.button("Giriş Yap"):
+    if not username or not password:
+        st.warning("Lütfen tüm alanları doldurun.")
+    else:
+        try:
+            response = requests.post(f"{API_URL}/login", json={
+                "username": username,
+                "password": password
             })
 
             if response.status_code == 200:
-                token = response.json().get("token")
-                st.session_state['token'] = token
-                st.session_state['username'] = username
-                st.session_state['logged_in'] = True
+                # Giriş yapıldıysa session state güncellenir
+                st.session_state["logged_in"] = True
+                st.session_state["username"] = username
                 st.success("Giriş başarılı!")
-
-                # Sayfayı tekrar yükleyerek diğer sayfalarda login bilgisini tanıtır
-                st.session_state["page"] = "dashboard"
-                st.rerun()
+                
+                # Sayfa yönlendirmesi: Sensor data sayfasına yönlendir
+                st.experimental_set_query_params(page="sensor_data")
+                st.stop()
             else:
-                st.error(response.json().get("message", "Giriş başarısız."))
+                st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
+        except Exception as e:
+            st.error(f"Hata oluştu: {e}")
 
-# Oturum kontrolü ve sayfa seçimi
-def main():
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
+# Kayıt bağlantısı
+st.info("Hesabınız yok mu?")
+if st.button("Kayıt Ol"):
+    # Kayıt sayfasına yönlendirme
+    st.experimental_set_query_params(page="register")  # Sayfa ismi yerine parametre ekleyerek yönlendirme
+    st.stop()
 
-    if st.session_state.logged_in:
-        st.success(f"Zaten giriş yapıldı: {st.session_state['username']}")
-        if st.button("Çıkış Yap"):
-            st.session_state.clear()
-            st.rerun()
-    else:
-        page = st.radio("Lütfen Seçin", ["Giriş Yap", "Kayıt Ol"])
-        if page == "Giriş Yap":
-            login_user()
-        else:
-            register_user()
-
-main()
 
 
