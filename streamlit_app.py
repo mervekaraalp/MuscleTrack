@@ -17,7 +17,9 @@ Devam edebilmek için giriş yapın veya kayıt olun! 👇
 # Kayıt sayfasına yönlendirme
 if "page" in st.session_state and st.session_state.page == "register":
     st.experimental_set_query_params(page="register")
-    st.experimental_rerun()
+    st.write("Yönlendiriliyorsunuz... Lütfen bekleyin.")
+    st.stop()
+
 else:
     # Giriş ekranı
     if "token" not in st.session_state:
@@ -36,7 +38,8 @@ else:
                     token = response.json()["token"]
                     st.session_state.token = token
                     st.success("Giriş başarılı!")
-                    st.experimental_rerun()
+                    st.experimental_set_query_params(page="home")  # Burada yönlendirme yapılacak
+                    st.stop()
                 else:
                     st.error("Kullanıcı adı veya şifre hatalı.")
 
@@ -46,7 +49,8 @@ else:
         # Kayıt ol butonu
         if st.button("Kayıt Ol"):
             st.session_state.page = "register"
-            st.experimental_rerun()
+            st.experimental_set_query_params(page="register")
+            st.stop()
 
     # Giriş yaptıktan sonra gösterilecek veriler
     else:
@@ -71,7 +75,9 @@ else:
 
         if st.button("Çıkış Yap"):
             del st.session_state.token
-            st.experimental_rerun()
+            st.experimental_set_query_params(page="home")  # Sayfa yönlendirmesi yapılacak
+            st.stop()
+
 
 
 
