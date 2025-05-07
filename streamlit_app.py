@@ -1,9 +1,21 @@
 import streamlit as st
 import requests
-from streamlit_extras.switch_page_button import switch_page  # switch_page'yi doğru şekilde içe aktar
 
 # API URL (Render'daki Flask sunucun)
 API_URL = "https://muscletrack.onrender.com"
+
+# Sayfa ismi kontrolü
+page = st.experimental_get_query_params().get("page", ["login"])[0]
+
+if page == "login":
+    st.title("Giriş Sayfası")
+    # Giriş işlemleri burada yapılacak
+    st.write("Giriş yapın...")
+
+if page == "register":
+    st.title("Kayıt Sayfası")
+    # Kayıt işlemleri burada yapılacak
+    st.write("Yeni kullanıcı kaydını tamamlayın...")
 
 # Başlık
 st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
@@ -11,7 +23,7 @@ st.title("💪 MuscleTrack Giriş Paneli")
 
 # Giriş yapıldıysa doğrudan yönlendir
 if st.session_state.get("logged_in"):
-    switch_page("pages/sensor_data.py")  # Sayfa yönlendirme
+    st.experimental_set_query_params(page="sensor_data")  # URL parametreleri ile yönlendirme
     st.stop()
 
 # Giriş Formu
@@ -29,10 +41,14 @@ if st.button("Giriş Yap"):
             })
 
             if response.status_code == 200:
-                # Giriş yapıldıysa doğrudan yönlendir
+                # Giriş yapıldıysa session state güncellenir
                 st.session_state["logged_in"] = True
                 st.session_state["username"] = username
-                switch_page("pages/sensor_data.py")  # Sayfayı yönlendir
+                st.success("Giriş başarılı!")
+                
+                # Sayfa yönlendirmesi: Sensor data sayfasına yönlendir
+                st.experimental_set_query_params(page="sensor_data")
+                st.stop()
             else:
                 st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
         except Exception as e:
@@ -41,7 +57,10 @@ if st.button("Giriş Yap"):
 # Kayıt bağlantısı
 st.info("Hesabınız yok mu?")
 if st.button("Kayıt Ol"):
-    switch_page("pages/register.py")
+    # Kayıt sayfasına yönlendirme
+    st.experimental_set_query_params(page="register")  # Sayfa ismi yerine parametre ekleyerek yönlendirme
+    st.stop()
+
 
 
 
