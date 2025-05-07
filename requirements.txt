@@ -11,3 +11,4 @@ streamlit
 requests
 Werkzeug
 python-dotenv
+streamlit-extras
