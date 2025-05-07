@@ -1,22 +1,47 @@
 import streamlit as st
 import requests
 
-# API adresi (Render üzerindeki Flask uygulaman)
+# API adresi
 API_URL = "https://muscletrack.onrender.com"
 
 # Sayfa ayarları
 st.set_page_config(page_title="MuscleTrack", page_icon="💪", layout="centered")
 
-# Başlık
-st.title("💪 MuscleTrack Paneli")
-st.markdown("""
-Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.  
-Devam edebilmek için giriş yapın veya kayıt olun! 👇
-""")
+# URL parametresinden sayfa bilgisi al
+page = st.query_params.get("page", None)
 
-# Giriş ekranı
-if "token" not in st.session_state:
-    st.subheader("Giriş Yap")
+# Eğer "register" sayfası çağrıldıysa kayıt formunu göster
+if page == "register":
+    st.title("📝 Kayıt Ol")
+    username = st.text_input("Yeni Kullanıcı Adı")
+    password = st.text_input("Şifre", type="password")
+
+    if st.button("Kaydol"):
+        try:
+            response = requests.post(f"{API_URL}/register_api", json={
+                "username": username,
+                "password": password
+            })
+
+            if response.status_code == 201:
+                st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz.")
+                st.query_params.clear()  # URL'den "register" parametresini kaldır
+                st.rerun()
+            else:
+                st.error("Kayıt başarısız. Kullanıcı adı zaten mevcut olabilir.")
+        except requests.exceptions.RequestException:
+            st.error("API'ye ulaşılamadı.")
+    if st.button("Giriş Sayfasına Dön"):
+        st.query_params.clear()
+        st.rerun()
+
+# Eğer giriş yapılmamışsa giriş ekranını göster
+elif "token" not in st.session_state:
+    st.title("💪 MuscleTrack Paneli")
+    st.markdown("""
+    Gerçek zamanlı kas izleme ve rehabilitasyon sürecini takip etme platformu.  
+    Devam edebilmek için giriş yapın veya kayıt olun! 👇
+    """)
     username = st.text_input("Kullanıcı Adı")
     password = st.text_input("Şifre", type="password")
 
@@ -31,19 +56,17 @@ if "token" not in st.session_state:
                 token = response.json()["token"]
                 st.session_state.token = token
                 st.success("Giriş başarılı!")
-                st.rerun()  # Sayfayı yenile
+                st.rerun()
             else:
                 st.error("Kullanıcı adı veya şifre hatalı.")
         except requests.exceptions.RequestException:
-            st.error("API sunucusuna bağlanılamadı. Lütfen bağlantıyı kontrol edin.")
+            st.error("API sunucusuna bağlanılamadı.")
 
-    # Kayıt ol butonu
     if st.button("Kayıt Ol"):
-        st.session_state.page = "register"
-        st.query_params.update({"page": "register"})  # URL'yi güncelle
-        st.rerun()  # Sayfayı yönlendir
+        st.query_params.update({"page": "register"})
+        st.rerun()
 
-# Giriş yaptıktan sonra gösterilecek veriler
+# Giriş yapılmışsa sensör verilerini göster
 else:
     st.subheader("Sensör Verileri")
 
@@ -59,13 +82,14 @@ else:
             st.metric(label="EMG Değeri", value=emg)
             st.metric(label="Flex Değeri", value=flex)
         else:
-            st.error("Sensör verileri alınamadı. API anahtarını veya sunucuyu kontrol edin.")
+            st.error("Sensör verileri alınamadı.")
     except requests.exceptions.RequestException:
-        st.error("API'ye bağlanılamadı. Lütfen internet bağlantınızı veya sunucuyu kontrol edin.")
+        st.error("API'ye ulaşılamadı.")
 
     if st.button("Çıkış Yap"):
         del st.session_state.token
         st.rerun()
+
 
 
 
