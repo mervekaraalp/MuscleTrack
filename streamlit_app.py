@@ -66,7 +66,6 @@ else:
     if st.button("Çıkış Yap"):
         del st.session_state.token
         st.rerun()
-s
 
 
 
