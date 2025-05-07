@@ -1,4 +1,5 @@
 flask-cors
+streamlit-extras
 
 absl-py==2.2.1
 aiobotocore @ file:///C:/b/abs_3cwz1w13nn/croot/aiobotocore_1701291550158/work
