@@ -5,14 +5,15 @@ import altair as alt
 
 st.set_page_config(page_title="Sensör Verileri", page_icon="📊")
 
-# Giriş kontrolü
-if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
-    st.warning("Lütfen önce giriş yapın.")
+# Giriş kontrolü (token kullanımı)
+if "token" not in st.session_state:
+    st.warning("Bu sayfaya erişmek için giriş yapmalısınız.")
     st.stop()
 
 st.title("📊 Sensör Verileri")
 st.write("Bu sayfada sensör verilerini izleyebilirsiniz.")
 
+# Kullanıcı adı gösterimi (varsa)
 if "username" in st.session_state:
     st.subheader(f"Merhaba, **{st.session_state.username}**!")
 
@@ -21,7 +22,7 @@ sensor_type = st.radio("Sensör Tipi Seç", ["EMG Kas Sensörü", "Flex Sensörl
 body_part = st.radio("Vücut Bölgesi", ["Ayak", "Bacak"], horizontal=True)
 time_range = st.selectbox("Zaman Aralığı", ["Son 7 Gün", "Son 30 Gün", "Tüm Veriler"])
 
-# Tarih aralığı hesaplama
+# Tarih hesaplama
 today = datetime.today()
 if time_range == "Son 7 Gün":
     start_date = today - timedelta(days=7)
@@ -31,10 +32,9 @@ else:
     start_date = today - timedelta(days=365)
 
 num_days = (today - start_date).days
-dates = [today - timedelta(days=i) for i in range(num_days)]
-dates = sorted(dates)
+dates = sorted([today - timedelta(days=i) for i in range(num_days)])
 
-# EMG
+# EMG grafiği
 if sensor_type == "EMG Kas Sensörü":
     df = pd.DataFrame({
         "Tarih": dates,
@@ -50,7 +50,7 @@ if sensor_type == "EMG Kas Sensörü":
     ).properties(width=700, height=300)
     st.altair_chart(emg_chart, use_container_width=True)
 
-# Flex
+# Flex grafiği
 else:
     df = pd.DataFrame({
         "Tarih": dates,
@@ -73,6 +73,15 @@ else:
     ).properties(width=700, height=300)
     st.altair_chart(flex_chart, use_container_width=True)
 
+# Tablo
 st.subheader("📄 Detaylı Sensör Verileri")
 st.dataframe(df.sort_values("Tarih", ascending=False), use_container_width=True)
+
+# Çıkış
+if st.button("Çıkış Yap"):
+    del st.session_state["token"]
+    if "username" in st.session_state:
+        del st.session_state["username"]
+    st.switch_page("streamlit_app")
+
 
