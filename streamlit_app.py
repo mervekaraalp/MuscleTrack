@@ -16,6 +16,7 @@ Devam edebilmek için giriş yapın veya kayıt olun! 👇
 
 # Kayıt sayfasına yönlendirme
 if "page" in st.session_state and st.session_state.page == "register":
+    st.experimental_set_query_params(page="register")
     st.experimental_rerun()
 else:
     # Giriş ekranı
