@@ -51,8 +51,36 @@ if page == "login":
 
 # Kayıt Sayfası
 elif page == "register":
-    st.title("Kayıt Sayfası")
+    st.title("📝 Kayıt Sayfası")
     st.write("Yeni kullanıcı kaydını tamamlayın...")
+
+    new_username = st.text_input("Kullanıcı Adı (Yeni)")
+    new_password = st.text_input("Şifre", type="password")
+    confirm_password = st.text_input("Şifreyi Onayla", type="password")
+
+    if st.button("Kaydı Tamamla"):
+        if not new_username or not new_password or not confirm_password:
+            st.warning("Lütfen tüm alanları doldurun.")
+        elif new_password != confirm_password:
+            st.warning("Şifreler uyuşmuyor.")
+        else:
+            try:
+                response = requests.post(f"{API_URL}/register", json={
+                    "username": new_username,
+                    "password": new_password
+                })
+
+                if response.status_code == 201:
+                    st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
+                    st.query_params.update({"page": "login"})
+                    st.rerun()
+                elif response.status_code == 409:
+                    st.error("Bu kullanıcı adı zaten mevcut.")
+                else:
+                    st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
+            except Exception as e:
+                st.error(f"Hata oluştu: {e}")
+
 
 
 
