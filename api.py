@@ -51,23 +51,29 @@ def token_required(f):
 def register_api():
     data = request.get_json()
     
+    # JSON formatını kontrol et
     if not all(k in data for k in ('username', 'password')):
         return jsonify({'message': 'Eksik bilgi gönderildi!'}), 400
     
+    # Kullanıcı adı kontrolü
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'message': f"Kullanıcı adı '{data['username']}' zaten alınmış!"}), 400
 
     try:
+        # Şifreyi hashle
         hashed_password = generate_password_hash(data['password'], method='pbkdf2:sha256')
 
+        # Yeni kullanıcı oluştur
         new_user = User(username=data['username'], password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         
         return jsonify({'message': 'Kullanıcı başarıyla oluşturuldu!'}), 201
-    
+
     except Exception as e:
+        # Hata detaylarını döndür
         return jsonify({'message': f'Kayıt sırasında bir hata oluştu: {str(e)}'}), 500
+
 
 
 ### KULLANICI GİRİŞ
