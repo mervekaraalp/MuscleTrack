@@ -5,15 +5,16 @@ import requests
 st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
 
 # Query parametresinden sayfa bilgisini al
-page = st.query_params.get("page", "login")
+params = st.query_params
+page = params.get("page", "login")
 
 # API URL (Flask sunucun)
 API_URL = "https://muscletrack.onrender.com"
 
 # Giriş yapılmışsa doğrudan yönlendir
 if st.session_state.get("logged_in"):
-    st.experimental_set_query_params(page="sensor_data")
-    st.stop()
+    st.query_params.update({"page": "sensor_data"})
+    st.rerun()
 
 # Giriş Sayfası
 if page == "login":
@@ -36,8 +37,8 @@ if page == "login":
                     st.session_state["logged_in"] = True
                     st.session_state["username"] = username
                     st.success("Giriş başarılı!")
-                    st.experimental_set_query_params(page="sensor_data")
-                    st.stop()
+                    st.query_params.update({"page": "sensor_data"})
+                    st.rerun()
                 else:
                     st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
             except Exception as e:
@@ -45,13 +46,14 @@ if page == "login":
 
     st.info("Hesabınız yok mu?")
     if st.button("Kayıt Ol"):
-        st.experimental_set_query_params(page="register")
-        st.stop()
+        st.query_params.update({"page": "register"})
+        st.rerun()
 
 # Kayıt Sayfası
 elif page == "register":
     st.title("Kayıt Sayfası")
     st.write("Yeni kullanıcı kaydını tamamlayın...")
+
 
 
 
