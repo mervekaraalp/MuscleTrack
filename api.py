@@ -8,13 +8,14 @@ import os
 from flask_cors import CORS
 
 app = Flask(__name__)
+# CORS izinlerini tüm uygulama için aç
+CORS(app)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'defaultsecretkey')  # Secret key'i güvenli bir şekilde almak
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# CORS izinlerini tüm uygulama için aç
-CORS(app)
+
 
 ### MODELLER
 
