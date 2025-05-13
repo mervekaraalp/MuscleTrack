@@ -22,7 +22,7 @@ if st.button("Giriş Yap"):
         st.warning("Lütfen tüm alanları doldurun.")
     else:
         try:
-            response = requests.post(f"{API_URL}/login", json={
+            response = requests.post(f"{API_URL}/login_api", json={
                 "username": username,
                 "password": password
             })
