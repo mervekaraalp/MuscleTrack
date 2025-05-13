@@ -28,7 +28,7 @@ if page == "login":
             st.warning("Lütfen tüm alanları doldurun.")
         else:
             try:
-                response = requests.post(f"{API_URL}/login", json={
+                response = requests.post("https://muscletrack.onrender.com/register_api", json=data)
                     "username": username,
                     "password": password
                 })
