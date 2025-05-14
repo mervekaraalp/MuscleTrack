@@ -1,17 +1,17 @@
 import streamlit as st
 import requests
 
-# ⛳️ İlk st. komutu bu olmalı:
+# Sayfa başlığı ve ikon
 st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
 
 # Query parametresinden sayfa bilgisini al
 params = st.query_params
 page = params.get("page", "login")
 
-# API URL (Flask sunucusu)
+# API URL
 API_URL = "https://muscletrack.onrender.com"
 
-# Giriş yapılmışsa doğrudan yönlendir
+# Giriş yapılmışsa direkt yönlendir
 if st.session_state.get("logged_in"):
     st.query_params.update({"page": "sensor_data"})
     st.rerun()
@@ -82,6 +82,12 @@ elif page == "register":
                 elif response.status_code == 409:
                     st.error("Bu kullanıcı adı zaten mevcut.")
                 else:
-                    st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
+                    try:
+                        error_message = response.json().get("message", "Kayıt başarısız. Lütfen tekrar deneyin.")
+                        st.error(error_message)
+                    except:
+                        st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
             except Exception as e:
                 st.error(f"Hata oluştu: {e}")
+
+
