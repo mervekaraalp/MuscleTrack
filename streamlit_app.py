@@ -1,17 +1,17 @@
 import streamlit as st
 import requests
 
-# ⛳️ İlk st. komutu bu olmalı:
+# Sayfa başlığı ve ikon
 st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
 
 # Query parametresinden sayfa bilgisini al
 params = st.query_params
 page = params.get("page", "login")
 
-# API URL (Flask sunucun)
+# API URL
 API_URL = "https://muscletrack.onrender.com"
 
-# Giriş yapılmışsa doğrudan yönlendir
+# Giriş yapılmışsa direkt yönlendir
 if st.session_state.get("logged_in"):
     st.query_params.update({"page": "sensor_data"})
     st.rerun()
@@ -28,17 +28,22 @@ if page == "login":
             st.warning("Lütfen tüm alanları doldurun.")
         else:
             try:
-                response = requests.post(f"{API_URL}/login", json={
+                response = requests.post(f"{API_URL}/login_api", json={
                     "username": username,
                     "password": password
                 })
 
                 if response.status_code == 200:
-                    st.session_state["logged_in"] = True
-                    st.session_state["username"] = username
-                    st.success("Giriş başarılı!")
-                    st.query_params.update({"page": "sensor_data"})
-                    st.rerun()
+                    token = response.json().get("token")
+                    if token:
+                        st.session_state["logged_in"] = True
+                        st.session_state["username"] = username
+                        st.session_state["token"] = token
+                        st.success("Giriş başarılı!")
+                        st.query_params.update({"page": "sensor_data"})
+                        st.rerun()
+                    else:
+                        st.error("Token alınamadı.")
                 else:
                     st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
             except Exception as e:
@@ -65,7 +70,7 @@ elif page == "register":
             st.warning("Şifreler uyuşmuyor.")
         else:
             try:
-                response = requests.post(f"{API_URL}/register", json={
+                response = requests.post(f"{API_URL}/register_api", json={
                     "username": new_username,
                     "password": new_password
                 })
@@ -77,7 +82,10 @@ elif page == "register":
                 elif response.status_code == 409:
                     st.error("Bu kullanıcı adı zaten mevcut.")
                 else:
-                    st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
+                    try:
+                        error_message = response.json().get("message", "Kayıt başarısız. Lütfen tekrar deneyin.")
+                        st.error(error_message)
+                    except:
+                        st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
             except Exception as e:
                 st.error(f"Hata oluştu: {e}")
-
