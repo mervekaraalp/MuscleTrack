@@ -6,15 +6,16 @@ import os
 st.set_page_config(page_title="Egzersiz Sayfası", page_icon="🏋️")
 
 # Giriş kontrolü
-if 'giris_yapildi' not in st.session_state or not st.session_state["giris_yapildi"]:
+if 'logged_in' not in st.session_state or not st.session_state.get("logged_in", False):
     st.warning("Lütfen önce giriş yapınız.")
     st.stop()  # Giriş yapılmadıysa, sayfanın geri kalanını çalıştırma
 
 # Giriş yapan kullanıcıyı selamla
-st.markdown(f"## Merhaba, **{st.session_state['username']}**! 👋")
+username = st.session_state.get('username', 'Misafir')
+st.markdown(f"## Merhaba, **{username}**! 👋")
 st.markdown("Aşağıda günlük egzersiz planınızı bulabilirsiniz. Her egzersizi tamamladığınızda 'Yapıldı' butonuna basmayı unutmayın!")
 
-# Egzersiz listesi (Yeni egzersizler eklendi)
+# Egzersiz listesi
 egzersizler = {
     "Bacak Kaldırma": "Bacağınızı yukarı kaldırıp indirme hareketi. 10 tekrar.",
     "Ayak Bileği Pompası": "Ayak bileğini yukarı-aşağı oynatma. 15 tekrar.",
@@ -55,10 +56,11 @@ for egzersiz, aciklama in egzersizler.items():
             if st.button(f"{egzersiz} - Yapıldı ✅"):
                 st.session_state['tamamlanan_egzersizler'].append(egzersiz)
                 st.success(f"{egzersiz} tamamlandı!")
+                st.experimental_rerun()  # Butona basınca sayfayı yenileyerek UI'yi güncelle
         else:
             st.info("Bu egzersizi zaten tamamladınız 🎉")
 
-# Tüm egzersizleri gösteren tablo
+# Tüm egzersizleri gösteren liste
 if st.session_state['tamamlanan_egzersizler']:
     st.markdown("### ✅ Bugün tamamladığınız egzersizler:")
     for egz in st.session_state['tamamlanan_egzersizler']:
@@ -66,9 +68,8 @@ if st.session_state['tamamlanan_egzersizler']:
 
 # Kaydet butonu (simülasyon)
 if st.button("📁 Egzersiz Verilerini Kaydet"):
-    # Bu aşamada bir veritabanına veri gönderilebilir
+    # Burada gerçek veritabanı kaydı ya da API çağrısı yapılabilir
     st.success("Egzersiz verileri başarıyla kaydedildi!")
 
 # Sayfa altı notu
 st.caption("MuscleTrack – Sağlıklı bir yaşam için egzersiz takibi 💪")
-
