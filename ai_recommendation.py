@@ -1,64 +1,51 @@
 import streamlit as st
 import random
-from database import egzersiz_kaydet
 
-st.set_page_config(page_title="AI Egzersiz Önerisi", page_icon="🧠")
-
-st.title("🧠 AI Destekli Egzersiz Önerisi")
-st.markdown("Sensör verilerinizi analiz ederek size en uygun egzersizleri öneriyoruz.")
-
-# Giriş kontrolü
-if 'giris_yapildi' not in st.session_state or not st.session_state['giris_yapildi']:
-    st.warning("Lütfen önce giriş yapınız.")
-    st.stop()
-
-# Kullanıcı adı kontrolü
-kullanici_adi = st.session_state.get("username", "Bilinmiyor")
-
-# Vücut bölgesi seçimi
-bolge = st.selectbox("Lütfen bir vücut bölgesi seçin:", ["Ayak", "El"])
-
-# Simülasyon - ilgili bölge için veri durumu
-veri_durumu = st.selectbox("AI sistemine göre bu bölgede bir sorun var mı?", ["Evet", "Hayır"])
-
-# Egzersiz veritabanı
-egzersizler = {
-    "Ayak": {
+def get_ai_recommendations():
+    # Yapay zekâ simülasyonu – gelecekte ML modeliyle değiştirilebilir
+    all_exercises = {
+        "Plank": "Karın kaslarını güçlendirmek için 30 saniye plank.",
+        "Köprü Hareketi": "Kalçayı güçlendirmek için 10 tekrar köprü hareketi.",
+        "Squat": "Bacak kaslarını güçlendirmek için 15 squat.",
+        "Lunge": "Her bacak için 10 tekrar lunge.",
+        "Diz Germe": "Diz düzken ayağı yukarı kaldırıp tutma. 10 saniye × 3.",
         "Topuk Üzerinde Yükselme": "Topuklar üzerinde yükselip inme. 10 tekrar.",
-        "Ayak Bileği Pompası": "Ayak bileğini yukarı-aşağı oynatma. 15 tekrar.",
-        "Ayak Parmak Esnetme": "Parmakları ileri-geri hareket ettirme. 10 tekrar.",
-        "Bacak Kaldırma": "Bacağı yukarı kaldırıp indirme. 10 tekrar.",
-    },
-    "El": {
-        "Top Sıkma": "Yumuşak bir topu 5 saniye boyunca sıkın, bırakın. 10 tekrar.",
-        "Parmak Açma": "Avucunuzu açın ve kapatın. 15 tekrar.",
-        "Bilek Döndürme": "Bileğinizi saat yönünde ve ters yönde döndürün. 10 tekrar.",
-        "Avuç Genişletme": "Parmakları yana açıp kapatma. 12 tekrar.",
     }
-}
 
-# Egzersiz önerileri (AI simülasyonu)
-st.markdown(f"### 🤖 Önerilen Egzersizler ({bolge} için):")
+    # Kullanıcıya özel öneri örneği (rastgele 3 öneri)
+    selected = random.sample(list(all_exercises.items()), k=3)
+    return dict(selected)
 
-if veri_durumu == "Evet":
-    st.success(f"AI'ya göre {bolge.lower()} bölgenizde bir sorun olabilir. Aşağıdaki egzersizler önerilmektedir:")
-    onerilen = list(egzersizler[bolge].items())[:3]
-else:
-    st.info(f"{bolge} bölgesinde sorun tespit edilmedi. Genel egzersiz önerileri aşağıda:")
-    onerilen = random.sample(list(egzersizler[bolge].items()), 3)
+def app():
+    st.markdown(f"## Merhaba, **{st.session_state.get('username', 'Misafir')}**! 🤖")
+    st.markdown("Aşağıda sana özel olarak önerilen AI destekli egzersiz planı yer alıyor.")
 
-# Listele
-for ad, aciklama in onerilen:
-    st.markdown(f"- **{ad}**: {aciklama}")
+    # AI önerilerini getir
+    ai_egzersizler = get_ai_recommendations()
 
-# Egzersizleri kaydet
-if st.button("📥 Egzersizleri Günlük Kaydet"):
-    egzersiz_kaydet(
-        kullanici_adi=kullanici_adi,
-        bolge=bolge,
-        egzersizler=[ad for ad, _ in onerilen]
-    )
-    st.success("Egzersiz önerileri başarıyla günlük geçmişinize kaydedildi.")
+    if 'tamamlanan_ai_egzersizler' not in st.session_state:
+        st.session_state['tamamlanan_ai_egzersizler'] = []
 
-# Alt bilgi
-st.caption("MuscleTrack AI – Sensör destekli akıllı egzersiz rehberi 💪")
+    for egzersiz, aciklama in ai_egzersizler.items():
+        with st.expander(egzersiz):
+            st.write(aciklama)
+            if egzersiz not in st.session_state['tamamlanan_ai_egzersizler']:
+                if st.button(f"{egzersiz} - Yapıldı ✅"):
+                    st.session_state['tamamlanan_ai_egzersizler'].append(egzersiz)
+                    st.success(f"{egzersiz} tamamlandı!")
+                    st.experimental_rerun()
+            else:
+                st.info("Bu AI egzersizini zaten tamamladınız 🎉")
+
+    if st.session_state['tamamlanan_ai_egzersizler']:
+        st.markdown("### 🤖 Tamamladığınız AI Egzersizleri:")
+        for egz in st.session_state['tamamlanan_ai_egzersizler']:
+            st.markdown(f"- {egz}")
+
+    if st.button("📁 AI Egzersiz Verilerini Kaydet"):
+        st.success("AI destekli egzersiz verileri kaydedildi!")
+
+    st.caption("MuscleTrack – Yapay Zekâ ile kişisel egzersiz önerileri 💡")
+
+
+
