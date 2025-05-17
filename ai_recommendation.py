@@ -62,5 +62,3 @@ if st.button("📥 Egzersizleri Günlük Kaydet"):
 
 # Alt bilgi
 st.caption("MuscleTrack AI – Sensör destekli akıllı egzersiz rehberi 💪")
-
-
