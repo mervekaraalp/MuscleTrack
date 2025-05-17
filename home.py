@@ -21,7 +21,8 @@ MuscleTrack, kas sağlığınızı gerçek zamanlı olarak izler ve iyileşme s�
 # Görsel
 st.image("https://images.unsplash.com/photo-1584467735871-4c4d7c68d4e0", caption="MuscleTrack ile daha sağlıklı bir iyileşme")
 
-# Giriş formu fonksiyonu
+
+# Giriş formu
 def giris_formu():
     with st.form(key="giris_formu"):
         kullanici_adi = st.text_input("Kullanıcı Adı")
@@ -29,16 +30,20 @@ def giris_formu():
         giris_button = st.form_submit_button("🔐 Giriş Yap")
 
         if giris_button:
+            # Geçici sabit kimlik doğrulama
             if kullanici_adi == "admin" and sifre == "1234":
-                st.session_state["giris_yapildi"] = True
+                st.session_state["logged_in"] = True
+                st.session_state["username"] = kullanici_adi
                 st.success("Giriş başarılı!")
             else:
                 st.error("Kullanıcı adı veya şifre hatalı!")
 
-# Giriş yapılmadıysa giriş formunu göster
-if not st.session_state.get("giris_yapildi"):
+
+# Giriş kontrolü
+if not st.session_state.get("logged_in"):
     giris_formu()
 else:
-    st.success("Zaten giriş yaptınız.")
-    st.info("Devam etmek için üst menüden bir sayfa seçebilirsiniz.")
+    st.success(f"Zaten giriş yaptınız, hoş geldiniz {st.session_state['username']}!")
+    st.info("Devam etmek için sol menüden bir sayfa seçebilirsiniz.")
+
 
