@@ -1,5 +1,6 @@
 import streamlit as st
 
+# Sayfa ayarları
 st.set_page_config(page_title="MuscleTrack", page_icon="💪")
 
 # Giriş formu
@@ -11,15 +12,12 @@ def giris_formu():
 
         if giris_button:
             if kullanici_adi == "admin" and sifre == "1234":
-                st.session_state["logged_in"] = True  # <-- TUTARLILIK
+                st.session_state["logged_in"] = True
                 st.session_state["username"] = kullanici_adi
                 st.success("Giriş başarılı!")
+                st.experimental_rerun()  # Girişten sonra sayfayı yenile
             else:
                 st.error("Kullanıcı adı veya şifre hatalı!")
-
-# Sayfa geçişi
-menu = ["Home", "Exercise", "Sensor Data", "Ayarlar"]
-secim = st.sidebar.radio("Sayfa Seç", menu)
 
 # Sayfa tanımları
 def home_sayfasi():
@@ -56,8 +54,19 @@ def ayarlar_sayfasi():
     if st.button("💾 Değişiklikleri Kaydet"):
         st.success("Ayarlar başarıyla kaydedildi!")
 
-# Ana yönlendirme
-if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
+# Ana menü
+menu = ["Home", "Exercise", "Sensor Data", "Ayarlar"]
+secim = st.sidebar.radio("Sayfa Seç", menu)
+
+# Çıkış butonu (sidebar'da)
+if st.session_state.get("logged_in"):
+    if st.sidebar.button("🚪 Çıkış Yap"):
+        st.session_state["logged_in"] = False
+        st.session_state.pop("username", None)
+        st.experimental_rerun()
+
+# Giriş kontrolü ve sayfa yönlendirme
+if not st.session_state.get("logged_in"):
     if secim != "Home":
         st.warning("Lütfen önce giriş yapın.")
     giris_formu()
@@ -70,4 +79,3 @@ else:
         sensor_data_sayfasi()
     elif secim == "Ayarlar":
         ayarlar_sayfasi()
-

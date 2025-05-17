@@ -39,7 +39,7 @@ st.markdown("""
 if st.button("✅ Yaptım (Ayak Bileği Pompası)"):
     st.session_state["tamamlanan_egzersiz"] += 1
     st.success("Tebrikler! Bir egzersizi tamamladınız. 🌟")
-    st.rerun()
+    st.experimental_rerun()
 
 st.markdown("---")
 
@@ -53,9 +53,7 @@ st.markdown("""
 if st.button("✅ Yaptım (Parmak Esnetme)"):
     st.session_state["tamamlanan_egzersiz"] += 1
     st.success("Harika! Bir egzersiz daha tamamlandı. 🌟")
-    st.rerun()
+    st.experimental_rerun()
 
 # Sayfa altı notu
 st.caption("MuscleTrack – Sağlıklı bir yaşam için egzersiz takibi 💪")
-
-

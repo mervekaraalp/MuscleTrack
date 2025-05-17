@@ -17,7 +17,11 @@ st.success(f"👋 Hoş geldin, {username}!")
 
 # API'den veri çekme
 headers = {"x-access-token": token}
-response = requests.get("https://muscletrack.onrender.com/sensor_data", headers=headers)
+try:
+    response = requests.get("https://muscletrack.onrender.com/sensor_data", headers=headers)
+except requests.exceptions.RequestException as e:
+    st.error(f"Veri alınırken hata oluştu: {e}")
+    st.stop()
 
 # API yanıtını işleme
 if response.status_code == 200:
@@ -39,7 +43,10 @@ if response.status_code == 200:
         st.line_chart(df.set_index("timestamp")[["emg", "flex", "value"]])
     else:
         st.info("Henüz gösterilecek sensör verisi yok.")
+elif response.status_code == 401:
+    st.error("Oturum süresi dolmuş olabilir, lütfen tekrar giriş yapın.")
+    # Oturum bilgisini sıfırlayabiliriz
+    st.session_state.clear()
+    st.stop()
 else:
-    st.error("Veri alınamadı. Oturum süresi dolmuş olabilir, lütfen tekrar giriş yapın.")
-
-
+    st.error("Veri alınamadı. Lütfen tekrar deneyin.")

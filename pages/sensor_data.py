@@ -5,7 +5,7 @@ import altair as alt
 
 st.set_page_config(page_title="Sensör Verileri", page_icon="📊")
 
-# Giriş kontrolü (token kullanımı)
+# Giriş kontrolü (token kontrolü)
 if "token" not in st.session_state:
     st.warning("Bu sayfaya erişmek için giriş yapmalısınız.")
     st.stop()
@@ -15,15 +15,15 @@ st.write("Bu sayfada sensör verilerini izleyebilirsiniz.")
 
 # Kullanıcı adı gösterimi (varsa)
 if "username" in st.session_state:
-    st.subheader(f"Merhaba, **{st.session_state.username}**!")
+    st.subheader(f"Merhaba, **{st.session_state['username']}**!")
 
-# Seçimler
+# Kullanıcıdan seçimler al
 sensor_type = st.radio("Sensör Tipi Seç", ["EMG Kas Sensörü", "Flex Sensörleri"], horizontal=True)
 body_part = st.radio("Vücut Bölgesi", ["Ayak", "Bacak"], horizontal=True)
-time_range = st.selectbox("Zaman Aralığı", ["Son 7 Gün", "Son 30 Gün", "Tüm Veriler"])
+time_range = st.selectbox("Zaman Aralığı", ["Son 7 Gün", "Son 30 Gün", "Son 365 Gün"])
 
 # Tarih hesaplama
-today = datetime.today()
+today = datetime.today().date()
 if time_range == "Son 7 Gün":
     start_date = today - timedelta(days=7)
 elif time_range == "Son 30 Gün":
@@ -32,14 +32,15 @@ else:
     start_date = today - timedelta(days=365)
 
 num_days = (today - start_date).days
-dates = sorted([today - timedelta(days=i) for i in range(num_days)])
+# Tarih listesini kronolojik (artan) sırada oluştur
+dates = [start_date + timedelta(days=i) for i in range(num_days + 1)]
 
-# EMG grafiği
+# Sensör verisi oluşturma (örnek veriler)
 if sensor_type == "EMG Kas Sensörü":
     df = pd.DataFrame({
         "Tarih": dates,
-        "Vücut Bölgesi": [body_part] * num_days,
-        "EMG (mV)": [round(100 + i * 0.5 + (i % 5) * 2.5, 2) for i in range(num_days)]
+        "Vücut Bölgesi": [body_part] * len(dates),
+        "EMG (mV)": [round(100 + i * 0.5 + (i % 5) * 2.5, 2) for i in range(len(dates))]
     })
 
     st.subheader("📉 EMG Zaman Serisi Grafiği")
@@ -50,16 +51,15 @@ if sensor_type == "EMG Kas Sensörü":
     ).properties(width=700, height=300)
     st.altair_chart(emg_chart, use_container_width=True)
 
-# Flex grafiği
 else:
     df = pd.DataFrame({
         "Tarih": dates,
-        "Vücut Bölgesi": [body_part] * num_days,
-        "Flex1": [round(20 + (i % 3) * 1.5, 2) for i in range(num_days)],
-        "Flex2": [round(25 + (i % 4) * 1.3, 2) for i in range(num_days)],
-        "Flex3": [round(30 + (i % 5) * 1.1, 2) for i in range(num_days)],
-        "Flex4": [round(22 + (i % 6) * 1.2, 2) for i in range(num_days)],
-        "Flex5": [round(28 + (i % 7) * 1.4, 2) for i in range(num_days)]
+        "Vücut Bölgesi": [body_part] * len(dates),
+        "Flex1": [round(20 + (i % 3) * 1.5, 2) for i in range(len(dates))],
+        "Flex2": [round(25 + (i % 4) * 1.3, 2) for i in range(len(dates))],
+        "Flex3": [round(30 + (i % 5) * 1.1, 2) for i in range(len(dates))],
+        "Flex4": [round(22 + (i % 6) * 1.2, 2) for i in range(len(dates))],
+        "Flex5": [round(28 + (i % 7) * 1.4, 2) for i in range(len(dates))]
     })
 
     st.subheader("📈 Flex Sensörleri Grafiği")
@@ -73,13 +73,16 @@ else:
     ).properties(width=700, height=300)
     st.altair_chart(flex_chart, use_container_width=True)
 
-# Tablo
+# Veri tablosu
 st.subheader("📄 Detaylı Sensör Verileri")
 st.dataframe(df.sort_values("Tarih", ascending=False), use_container_width=True)
 
-# Çıkış
+# Çıkış butonu
 if st.button("Çıkış Yap"):
-    del st.session_state["token"]
+    # Oturumdan token ve kullanıcı adını sil
+    if "token" in st.session_state:
+        del st.session_state["token"]
     if "username" in st.session_state:
         del st.session_state["username"]
-    st.switch_page("streamlit_app")
+    # Sayfayı yenileyerek giriş sayfasına yönlendirme
+    st.experimental_rerun()
