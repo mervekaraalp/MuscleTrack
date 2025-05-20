@@ -7,14 +7,16 @@ st.set_page_config(page_title="Egzersiz Takibi", page_icon="👣")
 st.title("Egzersiz Takibi")
 st.write("Bu sayfada egzersizlerinizi takip edebilir, ilerlemenizi görebilirsiniz.")
 
-# 🔐 Giriş kontrolü (diğer sayfalarla uyumlu)
-if "giris_yapildi" not in st.session_state or not st.session_state["giris_yapildi"]:
+
+# 🔐 Giriş kontrolü (güncellendi)
+if "username" not in st.session_state or not st.session_state["username"]:
     st.warning("Lütfen egzersizleri görebilmek için giriş yapın.")
     st.stop()
 
-# Kullanıcı adı (uyumlu anahtar ismi: kullanici_adi)
-kullanici_adi = st.session_state.get("kullanici_adi", "Kullanıcı")
-st.success(f"Hoş geldin **{kullanici_adi}** 👋")
+# Kullanıcı adı (güncellendi)
+kullanici_adi = st.session_state["username"]
+st.title("Egzersiz Takibi")
+st.write(f"Hoş geldin **{kullanici_adi}**! Bu sayfada egzersizlerini takip edebilir, ilerlemeni görebilirsin.")
 
 # 🎯 Egzersiz ilerleme takibi
 if "tamamlanan_egzersiz" not in st.session_state:
