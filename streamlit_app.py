@@ -21,7 +21,8 @@ page = params.get("page", "login")
 
 # Oturum kontrolü
 logged_in = st.session_state.get("logged_in", False)
-
+if "username" in st.session_state:
+    print("Kullanıcı:", st.session_state["username"])
 
 # Giriş yapılmışsa ve ana sayfa yükleniyorsa, varsayılan sayfaya yönlendir
 if logged_in and page in ["login", "register"]:
