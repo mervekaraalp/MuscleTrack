@@ -1,91 +1,79 @@
 import streamlit as st
 import requests
+import ai_recommendation
+import login
+import egzersiz_takibi
+import sensor_data
+import register
 
-# Sayfa başlığı ve ikon
-st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
+
+# Genel Ayarlar
+st.set_page_config(page_title="MuscleTrack", layout="wide", page_icon="💪")
+
+# API URL
+API_URL = "https://muscletrack.onrender.com"
+
+
 
 # Query parametresinden sayfa bilgisini al
 params = st.query_params
 page = params.get("page", "login")
 
-# API URL
-API_URL = "https://muscletrack.onrender.com"
+# Oturum kontrolü
+logged_in = st.session_state.get("logged_in", False)
 
-# Giriş yapılmışsa direkt yönlendir
-if st.session_state.get("logged_in"):
+
+# Giriş yapılmışsa ve ana sayfa yükleniyorsa, varsayılan sayfaya yönlendir
+if logged_in and page in ["login", "register"]:
     st.query_params.update({"page": "sensor_data"})
     st.rerun()
 
-# Giriş Sayfası
+# Sayfa yönlendirme
 if page == "login":
-    st.title("💪 MuscleTrack Giriş Paneli")
+    login.app()
 
-    username = st.text_input("Kullanıcı Adı")
-    password = st.text_input("Şifre", type="password")
+elif page == "register":
+    import register
+    register.app()
 
-    if st.button("Giriş Yap"):
-        if not username or not password:
-            st.warning("Lütfen tüm alanları doldurun.")
-        else:
-            try:
-                response = requests.post(f"{API_URL}/login_api", json={
-                    "username": username,
-                    "password": password
-                })
+elif page == "egzersiz_takibi":
+    Egzersiz_Takibi.app()
 
-                if response.status_code == 200:
-                    token = response.json().get("token")
-                    if token:
-                        st.session_state["logged_in"] = True
-                        st.session_state["username"] = username
-                        st.session_state["token"] = token
-                        st.success("Giriş başarılı!")
-                        st.query_params.update({"page": "sensor_data"})
-                        st.rerun()
-                    else:
-                        st.error("Token alınamadı.")
-                else:
-                    st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
-            except Exception as e:
-                st.error(f"Hata oluştu: {e}")
+elif page == "ai_recommendation":
+    ai_recommendation.app()
 
-    st.info("Hesabınız yok mu?")
-    if st.button("Kayıt Ol"):
-        st.query_params.update({"page": "register"})
+elif page == "sensor_data":
+    sensor_data.app()
+
+elif page == "egzersiz_gecmisi":
+    import egzersiz_gecmisi
+    egzersiz_gecmisi.app()
+
+elif page == "exercise":
+    import exercise
+    exercise.app()
+
+elif page == "settings":
+    import settings
+    settings.app()
+
+# Sidebar menüsü (giriş yapılmışsa)
+if logged_in:
+    secim = st.sidebar.radio("📋 Sayfa Seç", [
+        ("Egzersiz Takibi", "egzersiz_takibi"),
+        ("AI Egzersiz", "ai_recommendation"),
+        ("Sensör Verisi", "sensor_data"),
+        ("Egzersiz Geçmişi", "egzersiz_gecmisi"),
+        ("Ayarlar", "settings")
+    ])
+
+    if secim:
+        st.query_params.update({"page": secim[1]})
         st.rerun()
 
-# Kayıt Sayfası
-elif page == "register":
-    st.title("📝 Kayıt Sayfası")
-    st.write("Yeni kullanıcı kaydını tamamlayın...")
-
-    new_username = st.text_input("Kullanıcı Adı (Yeni)")
-    new_password = st.text_input("Şifre", type="password")
-    confirm_password = st.text_input("Şifreyi Onayla", type="password")
-
-    if st.button("Kaydı Tamamla"):
-        if not new_username or not new_password or not confirm_password:
-            st.warning("Lütfen tüm alanları doldurun.")
-        elif new_password != confirm_password:
-            st.warning("Şifreler uyuşmuyor.")
-        else:
-            try:
-                response = requests.post(f"{API_URL}/register_api", json={
-                    "username": new_username,
-                    "password": new_password
-                })
-
-                if response.status_code == 201:
-                    st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
-                    st.query_params.update({"page": "login"})
-                    st.rerun()
-                elif response.status_code == 409:
-                    st.error("Bu kullanıcı adı zaten mevcut.")
-                else:
-                    try:
-                        error_message = response.json().get("message", "Kayıt başarısız. Lütfen tekrar deneyin.")
-                        st.error(error_message)
-                    except:
-                        st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
-            except Exception as e:
-                st.error(f"Hata oluştu: {e}")
+# Çıkış butonu (giriş yapılmışsa)
+if logged_in:
+    if st.sidebar.button("❌ Çıkış Yap"):
+        st.session_state.clear()
+        st.query_params.update({"page": "login"})
+        st.rerun()
