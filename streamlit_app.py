@@ -6,74 +6,63 @@ import egzersiz_takibi
 import sensor_data
 import register
 
-
 # Genel Ayarlar
 st.set_page_config(page_title="MuscleTrack", layout="wide", page_icon="💪")
 
-# API URL
 API_URL = "https://muscletrack.onrender.com"
 
-
-
-# Query parametresinden sayfa bilgisini al
+# Sayfa Parametresi
 params = st.query_params
 page = params.get("page", "login")
 
-# Oturum kontrolü
+# Oturum Kontrolü
 logged_in = st.session_state.get("logged_in", False)
+
+# Kullanıcı adı konsola yazdırılsın (geliştirme amaçlı)
 if "username" in st.session_state:
     print("Kullanıcı:", st.session_state["username"])
 
-# Giriş yapılmışsa ve ana sayfa yükleniyorsa, varsayılan sayfaya yönlendir
+# Giriş yapılmışsa login/register sayfalarından yönlendir
 if logged_in and page in ["login", "register"]:
     st.query_params.update({"page": "sensor_data"})
     st.rerun()
 
-# Sayfa yönlendirme
+# Sayfa Yönlendirme
 if page == "login":
     login.app()
-
 elif page == "register":
-    import register
     register.app()
-
 elif page == "egzersiz_takibi":
-    Egzersiz_Takibi.app()
-
+    egzersiz_takibi.app()
 elif page == "ai_recommendation":
     ai_recommendation.app()
-
 elif page == "sensor_data":
     sensor_data.app()
-
 elif page == "egzersiz_gecmisi":
     import egzersiz_gecmisi
     egzersiz_gecmisi.app()
-
 elif page == "exercise":
     import exercise
     exercise.app()
-
 elif page == "settings":
     import settings
     settings.app()
 
-# Sidebar menüsü (giriş yapılmışsa)
+# Sidebar Menü ve Çıkış
 if logged_in:
-    secim = st.sidebar.radio("📋 Sayfa Seç", [
-        ("Egzersiz Takibi", "egzersiz_takibi"),
-        ("AI Egzersiz", "ai_recommendation"),
-        ("Sensör Verisi", "sensor_data"),
-        ("Egzersiz Geçmişi", "egzersiz_gecmisi"),
-        ("Ayarlar", "settings")
-    ])
+    sayfa_dict = {
+        "🏃 Egzersiz Takibi": "egzersiz_takibi",
+        "🤖 AI Egzersiz": "ai_recommendation",
+        "📈 Sensör Verisi": "sensor_data",
+        "📋 Egzersiz Geçmişi": "egzersiz_gecmisi",
+        "⚙️ Ayarlar": "settings"
+    }
 
+    secim = st.sidebar.radio("📋 Sayfa Seç", list(sayfa_dict.keys()))
     if secim:
-        st.query_params.update({"page": secim[1]})
+        st.query_params.update({"page": sayfa_dict[secim]})
         st.rerun()
 
-# Çıkış butonu (giriş yapılmışsa)
-if logged_in:
     if st.sidebar.button("❌ Çıkış Yap"):
         st.session_state.clear()
         st.query_params.update({"page": "login"})
