@@ -8,10 +8,10 @@ st.title("Egzersiz Takibi")
 st.write("Bu sayfada egzersizlerinizi takip edebilir, ilerlemenizi görebilirsiniz.")
 
 
-# 🔐 Giriş kontrolü (güncellendi)
-if "username" not in st.session_state or not st.session_state["username"]:
+if not st.session_state.get("logged_in"):
     st.warning("Lütfen egzersizleri görebilmek için giriş yapın.")
     st.stop()
+
 
 # Kullanıcı adı (güncellendi)
 kullanici_adi = st.session_state["username"]
