@@ -1,20 +1,30 @@
 import streamlit as st
 import random
 
-def get_ai_recommendations():
-    # Yapay zekâ simülasyonu – gelecekte ML modeliyle değiştirilebilir
-    all_exercises = {
-        "Plank": "Karın kaslarını güçlendirmek için 30 saniye plank.",
-        "Köprü Hareketi": "Kalçayı güçlendirmek için 10 tekrar köprü hareketi.",
-        "Squat": "Bacak kaslarını güçlendirmek için 15 squat.",
-        "Lunge": "Her bacak için 10 tekrar lunge.",
-        "Diz Germe": "Diz düzken ayağı yukarı kaldırıp tutma. 10 saniye × 3.",
-        "Topuk Üzerinde Yükselme": "Topuklar üzerinde yükselip inme. 10 tekrar.",
-    }
+# 🔹 1. AI öneri fonksiyonu - Burası eklenecek bölüm
+def get_ai_recommendations(username):
+    if username.startswith("rehab"):
+        return {
+            "Diz Germe": "Diz düzken ayağı yukarı kaldırıp tutma. 10 saniye × 3.",
+            "Topuk Üzerinde Yükselme": "Topuklar üzerinde yükselip inme. 10 tekrar.",
+            "Parmak Açma/Kapama": "Parmakları açıp kapama. 3 set."
+        }
+    elif username.startswith("athlete"):
+        return {
+            "Plank": "Karın kaslarını güçlendirmek için 30 saniye plank.",
+            "Squat": "Bacak kaslarını güçlendirmek için 15 squat.",
+            "Lunge": "Her bacak için 10 tekrar lunge."
+        }
+    else:
+        # Varsayılan öneriler (rastgele)
+        all_exercises = {
+            "Plank": "Karın kaslarını güçlendirmek için 30 saniye plank.",
+            "Köprü Hareketi": "Kalçayı güçlendirmek için 10 tekrar köprü hareketi.",
+            "Squat": "Bacak kaslarını güçlendirmek için 15 squat.",
+            "Diz Germe": "Diz düzken ayağı yukarı kaldırıp tutma. 10 saniye × 3.",
+        }
+        return dict(random.sample(list(all_exercises.items()), k=3))
 
-    # Kullanıcıya özel öneri örneği (rastgele 3 öneri)
-    selected = random.sample(list(all_exercises.items()), k=3)
-    return dict(selected)
 
 def app():
     st.markdown(f"## Merhaba, **{st.session_state.get('username', 'Misafir')}**! 🤖")
