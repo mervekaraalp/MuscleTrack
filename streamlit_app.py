@@ -37,7 +37,7 @@ elif page == "register":
     register.app()
 
 elif page == "egzersiz_takibi":
-    Egzersiz_Takibi.app()
+    egzersiz_takibi.app()
 
 elif page == "ai_recommendation":
     ai_recommendation.app()
