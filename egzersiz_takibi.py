@@ -1,4 +1,5 @@
 import streamlit as st
+st.write("Session state:", st.session_state)
 
 # Sayfa yapılandırması
 st.set_page_config(page_title="Egzersiz Takibi", page_icon="👣")
