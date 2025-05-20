@@ -5,7 +5,10 @@ import egzersiz_takibi
 import ai_recommendation
 import sensor_data
 
+st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
+st.title("💪 MuscleTrack Giriş Paneli")
 
+API_URL = "https://muscletrack.onrender.com"
 
 
 # Sidebar menüsü
@@ -17,7 +20,6 @@ else:
 
 
 
-API_URL = "https://muscletrack.onrender.com"
 
 def app():
     st.title("💪 MuscleTrack Giriş Paneli")
@@ -27,8 +29,7 @@ def app():
     # st.session_state['kullanici_adi'] = girilen_kullanici_adi
 
 
-st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
-st.title("💪 MuscleTrack Giriş Paneli")
+
 
 # Giriş yapıldıysa yönlendirme
 if st.session_state.get("logged_in"):  # burası zaten doğru
