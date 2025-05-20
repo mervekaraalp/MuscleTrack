@@ -1,9 +1,11 @@
 import streamlit as st
 import requests
+import ai_recommendation
 import login
 import egzersiz_takibi
-import ai_recommendation
 import sensor_data
+import register
+
 
 # Genel Ayarlar
 st.set_page_config(page_title="MuscleTrack", layout="wide", page_icon="💪")
@@ -11,12 +13,15 @@ st.set_page_config(page_title="MuscleTrack", layout="wide", page_icon="💪")
 # API URL
 API_URL = "https://muscletrack.onrender.com"
 
+
+
 # Query parametresinden sayfa bilgisini al
 params = st.query_params
 page = params.get("page", "login")
 
 # Oturum kontrolü
 logged_in = st.session_state.get("logged_in", False)
+
 
 # Giriş yapılmışsa ve ana sayfa yükleniyorsa, varsayılan sayfaya yönlendir
 if logged_in and page in ["login", "register"]:
@@ -32,7 +37,7 @@ elif page == "register":
     register.app()
 
 elif page == "egzersiz_takibi":
-    egzersiz_takibi.app()
+    Egzersiz_Takibi.app()
 
 elif page == "ai_recommendation":
     ai_recommendation.app()
