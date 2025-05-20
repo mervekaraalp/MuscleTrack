@@ -1,7 +1,31 @@
 import streamlit as st
 import requests
+import login
+import egzersiz_takibi
+import ai_recommendation
+import sensor_data
+
+
+
+
+# Sidebar menüsü
+if logged_in:
+    secim = st.sidebar.radio("📋 Sayfa Seç", ["Egzersiz Takibi", "AI Egzersiz", "Sensör Verisi"])
+else:
+    secim = "Giriş"
+
+
+
 
 API_URL = "https://muscletrack.onrender.com"
+
+def app():
+    st.title("💪 MuscleTrack Giriş Paneli")
+    # Kullanıcı adı, şifre girişi ve giriş işlemi kodu burada
+    # Giriş başarılıysa:
+    # st.session_state['logged_in'] = True
+    # st.session_state['kullanici_adi'] = girilen_kullanici_adi
+
 
 st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
 st.title("💪 MuscleTrack Giriş Paneli")
@@ -42,6 +66,7 @@ st.info("Hesabınız yok mu?")
 if st.button("Kayıt Ol"):
     st.experimental_set_query_params(page="register")
     st.stop()
+
 
 
 
