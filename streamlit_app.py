@@ -32,21 +32,22 @@ if page == "login":
     login.app()
 elif page == "register":
     register.app()
-elif page == "egzersiz_takibi":
-    egzersiz_takibi.app()
-elif page == "ai_recommendation":
-    ai_recommendation.app()
-elif page == "sensor_data":
-    sensor_data.app()
-elif page == "egzersiz_gecmisi":
-    import egzersiz_gecmisi
-    egzersiz_gecmisi.app()
-elif page == "exercise":
-    import exercise
-    exercise.app()
-elif page == "settings":
-    import settings
-    settings.app()
+elif logged_in:
+    if page == "egzersiz_takibi":
+        egzersiz_takibi.app()
+    elif page == "ai_recommendation":
+        ai_recommendation.app()
+    elif page == "sensor_data":
+        sensor_data.app()
+    elif page == "egzersiz_gecmisi":
+        import egzersiz_gecmisi
+        egzersiz_gecmisi.app()
+    elif page == "exercise":
+        import exercise
+        exercise.app()
+    elif page == "settings":
+        import settings
+        settings.app()
 
 # Sidebar Menü ve Çıkış
 if logged_in:
@@ -67,3 +68,10 @@ if logged_in:
         st.session_state.clear()
         st.query_params.update({"page": "login"})
         st.rerun()
+
+if not logged_in and page not in ["login", "register"]:
+    st.warning("Bu sayfaya erişmek için giriş yapmalısınız.")
+    if page != "login":
+        st.query_params.update({"page": "login"})
+        st.rerun()
+
