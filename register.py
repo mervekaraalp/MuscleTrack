@@ -9,7 +9,7 @@ def app():
     # Zaten giriş yapılmışsa ana sayfaya yönlendir
     if st.session_state.get("logged_in"):
         st.success("Zaten giriş yaptınız, yönlendiriliyorsunuz...")
-        st.experimental_set_query_params(page="sensor_data")
+        st.query_params.update({"page": "sensor_data"})
         st.stop()
 
     # Kayıt formu
@@ -31,7 +31,7 @@ def app():
 
                 if response.status_code == 201:
                     st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
-                    st.experimental_set_query_params(page="login")
+                    st.query_params.update({"page": "login"})
                     st.stop()
                 elif response.status_code == 409:
                     st.error("Bu kullanıcı adı zaten alınmış.")
@@ -41,5 +41,5 @@ def app():
                 st.error(f"Sunucu hatası: {e}")
 
     if st.button("🔙 Girişe Dön"):
-        st.experimental_set_query_params(page="login")
+        st.query_params.update({"page": "login"})
         st.stop()
