@@ -1,39 +1,39 @@
 import streamlit as st
-import requests
 import login
 import register
+import requests
 import ai_recommendation
 import egzersiz_takibi
 import sensor_data
 
-# Sayfa başlığı ve ikon
+# Sayfa başlığı ve ikon ayarları
 st.set_page_config(page_title="MuscleTrack", page_icon="💪")
 
 # Backend API adresi
 API_URL = "https://muscletrack.onrender.com"
 
-# Sayfa Parametresi (query param)
+# ✅ Yeni query param API kullanımı
 params = st.query_params
 page = params.get("page", "login")
 
-# Giriş durumu kontrolü
+# Oturum kontrolü
 logged_in = st.session_state.get("logged_in", False)
 
-# 🔐 Giriş yapılmamışsa sadece login/register erişilebilir
+# Giriş yapılmamışsa sadece login ve register'a izin ver
 if not logged_in and page not in ["login", "register"]:
-    st.experimental_set_query_params(page="login")
+    st.query_params.update({"page": "login"})
     st.rerun()
 
-# ✅ Giriş yapıldıysa login/register'dan çıkart
+# Giriş yapılmışsa login/register'dan diğer sayfalara yönlendir
 if logged_in and page in ["login", "register"]:
-    st.experimental_set_query_params(page="sensor_data")
+    st.query_params.update({"page": "sensor_data"})
     st.rerun()
 
-# Kullanıcı adı (debug için)
+# (Geliştirme amacıyla) Kullanıcı adı konsola yazdırılsın
 if "username" in st.session_state:
-    print("Aktif kullanıcı:", st.session_state["username"])
+    print("Kullanıcı:", st.session_state["username"])
 
-# Sayfa çağrıları
+# Ana sayfa yönlendirme
 if page == "login":
     login.app()
 elif page == "register":
@@ -54,7 +54,7 @@ elif page == "settings":
     import settings
     settings.app()
 
-# Sidebar menü ve çıkış
+# 🔘 Sidebar menü ve çıkış butonu
 if logged_in:
     sayfa_dict = {
         "🏃 Egzersiz Takibi": "egzersiz_takibi",
@@ -66,10 +66,10 @@ if logged_in:
 
     secim = st.sidebar.radio("📋 Sayfa Seç", list(sayfa_dict.keys()))
     if secim:
-        st.experimental_set_query_params(page=sayfa_dict[secim])
+        st.query_params.update({"page": sayfa_dict[secim]})
         st.rerun()
 
     if st.sidebar.button("❌ Çıkış Yap"):
         st.session_state.clear()
-        st.experimental_set_query_params(page="login")
+        st.query_params.update({"page": "login"})
         st.rerun()
