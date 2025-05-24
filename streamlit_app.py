@@ -1,40 +1,39 @@
 import streamlit as st
-
-# Genel Ayarlar
-st.set_page_config(page_title="MuscleTrack", layout="wide", page_icon="💪")
-
 import requests
-import ai_recommendation
 import login
+import register
+import ai_recommendation
 import egzersiz_takibi
 import sensor_data
-import register
+
+# Sayfa başlığı ve ikon
+st.set_page_config(page_title="MuscleTrack", page_icon="💪")
 
 # Backend API adresi
 API_URL = "https://muscletrack.onrender.com"
 
-# Sayfa Parametresi
+# Sayfa Parametresi (query param)
 params = st.query_params
 page = params.get("page", "login")
 
-# Oturum Kontrolü
+# Giriş durumu kontrolü
 logged_in = st.session_state.get("logged_in", False)
 
-# 🛑 Giriş yapılmamışsa login ve register dışındaki sayfalara erişimi engelle
+# 🔐 Giriş yapılmamışsa sadece login/register erişilebilir
 if not logged_in and page not in ["login", "register"]:
     st.experimental_set_query_params(page="login")
     st.rerun()
 
-# ✅ Giriş yapılmışsa login/register sayfalarından yönlendir
+# ✅ Giriş yapıldıysa login/register'dan çıkart
 if logged_in and page in ["login", "register"]:
     st.experimental_set_query_params(page="sensor_data")
     st.rerun()
 
-# Kullanıcı adı konsola yazdırılsın (geliştirme amaçlı)
+# Kullanıcı adı (debug için)
 if "username" in st.session_state:
-    print("Kullanıcı:", st.session_state["username"])
+    print("Aktif kullanıcı:", st.session_state["username"])
 
-# Sayfa Yönlendirme
+# Sayfa çağrıları
 if page == "login":
     login.app()
 elif page == "register":
@@ -55,7 +54,7 @@ elif page == "settings":
     import settings
     settings.app()
 
-# Sidebar Menü ve Çıkış
+# Sidebar menü ve çıkış
 if logged_in:
     sayfa_dict = {
         "🏃 Egzersiz Takibi": "egzersiz_takibi",
