@@ -4,7 +4,6 @@ import requests
 API_URL = "https://muscletrack.onrender.com"
 
 def app():
-    st.set_page_config(page_title="MuscleTrack Giriş", page_icon="💪")
     st.title("💪 MuscleTrack Giriş Paneli")
 
     # Eğer giriş yapıldıysa başka sayfaya yönlendir
