@@ -4,14 +4,24 @@ import requests
 API_URL = "https://muscletrack.onrender.com"
 
 def app():
-    st.title("📝 Yeni Hesap Oluştur")
+    st.title("📝 Kayıt Ol")
 
+    # Zaten giriş yapılmışsa ana sayfaya yönlendir
+    if st.session_state.get("logged_in"):
+        st.success("Zaten giriş yaptınız, yönlendiriliyorsunuz...")
+        st.experimental_set_query_params(page="sensor_data")
+        st.stop()
+
+    # Kayıt formu
     username = st.text_input("Kullanıcı Adı")
     password = st.text_input("Şifre", type="password")
+    confirm_password = st.text_input("Şifre (Tekrar)", type="password")
 
-    if st.button("Kaydol"):
-        if not username or not password:
-            st.warning("Lütfen kullanıcı adı ve şifre girin.")
+    if st.button("Kayıt Ol"):
+        if not username or not password or not confirm_password:
+            st.warning("Lütfen tüm alanları doldurun.")
+        elif password != confirm_password:
+            st.error("Şifreler eşleşmiyor.")
         else:
             try:
                 response = requests.post(f"{API_URL}/register_api", json={
@@ -23,9 +33,13 @@ def app():
                     st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
                     st.experimental_set_query_params(page="login")
                     st.stop()
-                elif response.status_code == 400:
-                    st.error(response.json().get("message", "Geçersiz kayıt verisi."))
+                elif response.status_code == 409:
+                    st.error("Bu kullanıcı adı zaten alınmış.")
                 else:
-                    st.error("Bilinmeyen bir hata oluştu.")
-            except requests.exceptions.RequestException:
-                st.error("API'ye bağlanılamadı. Lütfen bağlantınızı kontrol edin.")
+                    st.error("Kayıt başarısız. Lütfen tekrar deneyin.")
+            except Exception as e:
+                st.error(f"Sunucu hatası: {e}")
+
+    if st.button("🔙 Girişe Dön"):
+        st.experimental_set_query_params(page="login")
+        st.stop()
