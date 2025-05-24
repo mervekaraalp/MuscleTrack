@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 import altair as alt
 
 def app():
-    st.set_page_config(page_title="Sensör Verileri", page_icon="📊")
 
     # Giriş kontrolü (token kontrolü)
     if "token" not in st.session_state:
