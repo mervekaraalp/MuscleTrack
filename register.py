@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-from streamlit_extras.switch_page_button import switch_page
 
 API_URL = "https://muscletrack.onrender.com"
 
@@ -9,7 +8,7 @@ def app():
 
     if st.session_state.get("logged_in"):
         st.success("Zaten giriş yaptınız, yönlendiriliyorsunuz...")
-        switch_page("sensor_data")  # Sayfa adı neyse ona göre
+        st.query_params.update({"page": "sensor_data"})
         st.stop()
 
     username = st.text_input("Kullanıcı Adı")
@@ -30,7 +29,8 @@ def app():
 
                 if response.status_code == 201:
                     st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
-                    switch_page("login")
+                    st.query_params.update({"page": "login"})
+                    st.stop()
                 elif response.status_code == 409:
                     st.error("Bu kullanıcı adı zaten alınmış.")
                 else:
@@ -39,4 +39,5 @@ def app():
                 st.error(f"Sunucu hatası: {e}")
 
     if st.button("🔙 Girişe Dön"):
-        switch_page("login")
+        st.query_params.update({"page": "login"})
+        st.stop()
