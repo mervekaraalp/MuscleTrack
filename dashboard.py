@@ -1,6 +1,29 @@
 import streamlit as st
 import requests
 import pandas as pd
+import streamlit as st
+import login
+import egzersiz_takibi
+import ai_recommendation
+import sensor_data
+
+st.set_page_config(page_title="MuscleTrack", layout="wide")
+
+# Giriş kontrolü ve sidebar menü
+if 'logged_in' in st.session_state and st.session_state['logged_in']:
+    secim = st.sidebar.radio("Sayfa Seç", ["Giriş", "Egzersiz Takibi", "AI Egzersiz", "Sensör Verisi"])
+else:
+    secim = "Giriş"
+
+if secim == "Giriş":
+    login.app()
+elif secim == "Egzersiz Takibi":
+    egzersiz_takibi.app()
+elif secim == "AI Egzersiz":
+    ai_recommedition.app()
+elif secim == "Sensör Verisi":
+    sensor_data.app()
+
 
 st.title("📊 MuscleTrack Gösterge Paneli")
 
@@ -50,8 +73,3 @@ elif response.status_code == 401:
     st.stop()
 else:
     st.error("Veri alınamadı. Lütfen tekrar deneyin.")
-")
-
-
-
-
