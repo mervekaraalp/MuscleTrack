@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 
-# 🔹 1. AI öneri fonksiyonu - Burası eklenecek bölüm
+# 🔹 AI öneri fonksiyonu
 def get_ai_recommendations(username):
     if username.startswith("rehab"):
         return {
@@ -25,13 +25,14 @@ def get_ai_recommendations(username):
         }
         return dict(random.sample(list(all_exercises.items()), k=3))
 
-
+# 🔹 Sayfa fonksiyonu
 def app():
-    st.markdown(f"## Merhaba, **{st.session_state.get('username', 'Misafir')}**! 🤖")
+    username = st.session_state.get('username', 'misafir')
+    st.markdown(f"## Merhaba, **{username}**! 🤖")
     st.markdown("Aşağıda sana özel olarak önerilen AI destekli egzersiz planı yer alıyor.")
 
     # AI önerilerini getir
-    ai_egzersizler = get_ai_recommendations()
+    ai_egzersizler = get_ai_recommendations(username)
 
     if 'tamamlanan_ai_egzersizler' not in st.session_state:
         st.session_state['tamamlanan_ai_egzersizler'] = []
@@ -56,6 +57,3 @@ def app():
         st.success("AI destekli egzersiz verileri kaydedildi!")
 
     st.caption("MuscleTrack – Yapay Zekâ ile kişisel egzersiz önerileri 💡")
-
-
-
