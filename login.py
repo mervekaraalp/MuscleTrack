@@ -1,7 +1,10 @@
 import streamlit as st
 import requests
+import streamlit as st
+import requests
 
 API_URL = "https://muscletrack.onrender.com"
+
 
 def app():
     st.title("💪 MuscleTrack Giriş Paneli")
