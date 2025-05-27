@@ -24,6 +24,9 @@ elif choice == "Kayıt Ol":
 
 elif choice == "Sensör Verileri":
     sensor_data.app()
+elif choice == "AI Egzersiz Planı":
+    from pages import ai_recommendation
+    ai_recommendation.app()
 
 elif choice == "Çıkış Yap":
     st.session_state.logged_in = False
