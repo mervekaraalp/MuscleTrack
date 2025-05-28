@@ -2,7 +2,7 @@ import streamlit as st
 
 def app():
     # Sayfa yapılandırması
-    st.set_page_config(page_title="Egzersiz Takibi", page_icon="👣")
+    
     st.write("Session state:", st.session_state)
 
     # Başlık ve açıklama
