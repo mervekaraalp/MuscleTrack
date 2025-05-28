@@ -40,7 +40,7 @@ def app():
     if st.button("✅ Yaptım (Ayak Bileği Pompası)"):
         st.session_state["tamamlanan_egzersiz"] += 1
         st.success("Tebrikler! Bir egzersizi tamamladınız. 🌟")
-        st.experimental_rerun()
+        st.rerun()
 
     st.markdown("---")
 
@@ -54,8 +54,7 @@ def app():
     if st.button("✅ Yaptım (Parmak Esnetme)"):
         st.session_state["tamamlanan_egzersiz"] += 1
         st.success("Harika! Bir egzersiz daha tamamlandı. 🌟")
-        st.experimental_rerun()
+        st.rerun()
 
     # Sayfa altı notu
     st.caption("MuscleTrack – Sağlıklı bir yaşam için egzersiz takibi 💪")
-
