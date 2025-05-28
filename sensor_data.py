@@ -78,13 +78,7 @@ def app():
         st.error(f"Sunucuya bağlanırken hata oluştu: {e}")
         st.info("Lütfen backend API'nizin çalıştığından emin olun.")
 
-    # Çıkış butonu (dashboard.py'den taşındı)
-    if st.button("❌ Çıkış Yap"):
-        st.session_state.clear() # Tüm session state'i temizle
-        st.query_params.clear() # URL parametrelerini temizle
-        st.query_params.update({"page": "login"})
-        st.rerun()
-        return
+
 
     # Aşağıdaki kodlar (eski örnek veri oluşturma ve grafikler) kaldırılabilir veya yorum satırına alınabilir
     # Eğer isterseniz, API'den veri gelmediğinde fallback olarak bu örnek verileri gösterebilirsiniz.
