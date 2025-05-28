@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-import time # Bu satırı ekleyin
+import time
 
 API_URL = "https://muscletrack.onrender.com"
 
@@ -10,10 +10,9 @@ def app():
     if st.session_state.get("logged_in"):
         st.success("Zaten giriş yaptınız, yönlendiriliyorsunuz...")
         st.query_params.update({"page": "sensor_data"})
-        # st.stop() # Bu satırı kaldırın veya yoruma alın
-        st.experimental_rerun() # <- Bu satırı ekleyin
-        return # Yönlendirme sonrası fonksiyonun geri kalanını çalıştırmamak için
-
+        st.experimental_rerun()
+        return # <-- BURAYI EKLEYİN
+    
     username = st.text_input("Kullanıcı Adı")
     password = st.text_input("Şifre", type="password")
     confirm_password = st.text_input("Şifre (Tekrar)", type="password")
@@ -32,11 +31,10 @@ def app():
 
                 if response.status_code == 201:
                     st.success("Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...")
-                    time.sleep(1) # Kullanıcının mesajı görmesi için 1 saniye bekleyin
+                    time.sleep(1) # Kullanıcının mesajı görmesi için 1 saniye bekle
                     st.query_params.update({"page": "login"})
-                    # st.stop() # Bu satırı kaldırın veya yoruma alın
-                    st.experimental_rerun() # <- Bu satırı ekleyin
-                    return # Yönlendirme sonrası fonksiyonun geri kalanını çalıştırmamak için
+                    st.experimental_rerun() # <-- BURAYI KONTROL EDİN
+                    return # <-- BURAYI EKLEYİN (ÇOK ÖNEMLİ)
                 elif response.status_code == 409:
                     st.error("Bu kullanıcı adı zaten alınmış.")
                 elif response.status_code == 400: # Backend'iniz 400 dönerse bu hata için de kontrol ekleyebilirsiniz
@@ -48,6 +46,5 @@ def app():
 
     if st.button("🔙 Girişe Dön"):
         st.query_params.update({"page": "login"})
-        # st.stop() # Bu satırı kaldırın veya yoruma alın
-        st.experimental_rerun() # <- Bu satırı ekleyin
-        return # Yönlendirme sonrası fonksiyonun geri kalanını çalıştırmamak için
+        st.experimental_rerun() # <-- BURAYI KONTROL EDİN
+        return # <-- BURAYI EKLEYİN
