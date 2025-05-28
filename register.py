@@ -51,5 +51,5 @@ def app():
     st.write("Zaten bir hesabınız var mı?")
     if st.button("Girişe Dön"):
         st.query_params.update({"page": "login"}) # Giriş sayfasına geri dön
-        st.experimental_rerun()
+        st.rerun()
         return # <-- BURAYI EKLEYİN
