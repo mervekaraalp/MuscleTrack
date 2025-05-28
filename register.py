@@ -10,7 +10,7 @@ def app():
     if st.session_state.get('logged_in', False):
         st.info("Zaten giriş yapmışsınız. Ana sayfaya yönlendiriliyorsunuz...")
         st.query_params.update({"page": "sensor_data"})
-        st.experimental_rerun()
+        st.rerun()
         return # <-- BURAYI EKLEYİN
 
     st.title("📝 Yeni Kayıt")
@@ -35,7 +35,7 @@ def app():
                 st.success("Kayıt başarılı! Lütfen giriş yapın.")
                 time.sleep(1) # Yönlendirmeden önce kısa bir bekleme
                 st.query_params.update({"page": "login"}) # Başarılı kayıt sonrası login'e yönlendir
-                st.experimental_rerun()
+                st.rerun()
                 return # <-- BURAYI EKLEYİN
             elif response.status_code == 409: # Kullanıcı zaten varsa 409 Conflict
                 st.error("Bu kullanıcı adı zaten alınmış. Lütfen başka bir kullanıcı adı deneyin.")
