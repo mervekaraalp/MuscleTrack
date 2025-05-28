@@ -10,7 +10,7 @@ def app():
     if st.session_state.get('logged_in', False):
         st.info("Zaten giriş yapmışsınız. Ana sayfaya yönlendiriliyorsunuz...")
         st.query_params.update({"page": "sensor_data"}) # Giriş sonrası ana sayfa
-        st.experimental_rerun()
+        st.rerun()
         return # <-- BURAYI EKLEYİN
 
     st.title("🔐 Giriş Yap")
@@ -34,7 +34,7 @@ def app():
                 st.success(f"Hoş geldin, {username}!")
                 time.sleep(1) # Yönlendirmeden önce kısa bir bekleme
                 st.query_params.update({"page": "sensor_data"}) # Başarılı giriş sonrası yönlendirme
-                st.experimental_rerun()
+                st.rerun()
                 return # <-- BURAYI EKLEYİN
             elif response.status_code == 401:
                 st.error("Yanlış kullanıcı adı veya şifre.")
@@ -50,5 +50,5 @@ def app():
     st.write("Hesabınız yok mu?")
     if st.button("Kayıt Ol"):
         st.query_params.update({"page": "register"}) # Kayıt sayfasına yönlendir
-        st.experimental_rerun()
+        st.rerun()
         return # <-- BURAYI EKLEYİN
