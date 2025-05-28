@@ -14,7 +14,7 @@ def app():
     if "token" not in st.session_state:
         st.warning("Bu sayfaya erişmek için giriş yapmalısınız.")
         st.query_params.update({"page": "login"})
-        st.experimental_rerun()
+        st.rerun()
         return
 
     # Kullanıcı adı gösterimi (varsa)
@@ -69,7 +69,7 @@ def app():
             st.error("Oturum süresi dolmuş olabilir, lütfen tekrar giriş yapın.")
             st.session_state.clear()
             st.query_params.update({"page": "login"})
-            st.experimental_rerun()
+            st.rerun()
             return
         else:
             st.error(f"Sensör verileri alınamadı. Hata kodu: {response.status_code}")
@@ -83,7 +83,7 @@ def app():
         st.session_state.clear() # Tüm session state'i temizle
         st.query_params.clear() # URL parametrelerini temizle
         st.query_params.update({"page": "login"})
-        st.experimental_rerun()
+        st.rerun()
         return
 
     # Aşağıdaki kodlar (eski örnek veri oluşturma ve grafikler) kaldırılabilir veya yorum satırına alınabilir
