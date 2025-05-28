@@ -1,21 +1,18 @@
 import streamlit as st
 import requests
-import streamlit as st
-import requests
+import time # Bu satırı ekleyin
 
 API_URL = "https://muscletrack.onrender.com"
-
 
 def app():
     st.title("💪 MuscleTrack Giriş Paneli")
 
-    # Giriş yapılmışsa yönlendir
     if st.session_state.get("logged_in"):
         st.success(f"Zaten giriş yaptınız, yönlendiriliyorsunuz...")
         st.query_params.update({"page": "sensor_data"})
-        st.stop()
+        st.experimental_rerun()
+        return # <-- BURAYI EKLEYİN
 
-    # Giriş Formu
     username = st.text_input("Kullanıcı Adı")
     password = st.text_input("Şifre", type="password")
 
@@ -35,9 +32,10 @@ def app():
                     st.session_state["username"] = username
                     st.session_state["token"] = data.get("token")
                     st.success("Giriş başarılı! Yönlendiriliyorsunuz...")
+                    time.sleep(1)
                     st.query_params.update({"page": "sensor_data"})
-                    st.stop()
-
+                    st.experimental_rerun()
+                    return # <-- BURAYI EKLEYİN
                 else:
                     st.error("Giriş başarısız! Kullanıcı adı veya şifre hatalı.")
             except Exception as e:
@@ -46,4 +44,5 @@ def app():
     st.info("Hesabınız yok mu?")
     if st.button("Kayıt Ol"):
         st.query_params.update({"page": "register"})
-        st.stop()
+        st.experimental_rerun()
+        return # <-- BURAYI EKLEYİN
