@@ -24,7 +24,7 @@ def app():
             return # Eksik bilgi varsa daha fazla devam etme
 
         try:
-            response = requests.post(f"{API_URL}/login", json={"username": username, "password": password})
+            response = requests.post(f"{API_URL}/login_api", json={"username": username, "password": password})
 
             if response.status_code == 200:
                 data = response.json()
