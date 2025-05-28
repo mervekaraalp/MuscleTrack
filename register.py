@@ -29,7 +29,7 @@ def app():
             return
 
         try:
-            response = requests.post(f"{API_URL}/register", json={"username": new_username, "password": new_password})
+            response = requests.post(f"{API_URL}/register_api", json={"username": new_username, "password": new_password})
 
             if response.status_code == 201:
                 st.success("Kayıt başarılı! Lütfen giriş yapın.")
