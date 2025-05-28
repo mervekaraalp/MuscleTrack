@@ -45,7 +45,7 @@ def app():
                 if st.button(f"{egzersiz} - Yapıldı ✅"):
                     st.session_state['tamamlanan_egzersizler'].append(egzersiz)
                     st.success(f"{egzersiz} tamamlandı!")
-                    st.experimental_rerun()
+                    st.rerun()
             else:
                 st.info("Bu egzersizi zaten tamamladınız 🎉")
 
