@@ -95,4 +95,4 @@ if st.session_state.logged_in:
         st.session_state.clear()
         st.query_params.clear()
         st.query_params.update({"page": "login"})
-        st.experimental_rerun() # st.rerun() yerine experimental_rerun kullanın
+        st.rerun() # st.rerun() yerine experimental_rerun kullanın
